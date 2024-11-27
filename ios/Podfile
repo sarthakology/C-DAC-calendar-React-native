@@ -14,7 +14,7 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
-target 'pj1' do
+target 'shopsphereweb' do
   config = use_native_modules!
 
   use_react_native!(
@@ -23,7 +23,7 @@ target 'pj1' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  target 'pj1Tests' do
+  target 'shopspherewebTests' do
     inherit! :complete
     # Pods for testing
   end

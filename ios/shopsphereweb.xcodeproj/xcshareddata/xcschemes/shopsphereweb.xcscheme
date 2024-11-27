@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "pj1.app"
-               BlueprintName = "pj1"
-               ReferencedContainer = "container:pj1.xcodeproj">
+               BuildableName = "shopsphereweb.app"
+               BlueprintName = "shopsphereweb"
+               ReferencedContainer = "container:shopsphereweb.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "pj1Tests.xctest"
-               BlueprintName = "pj1Tests"
-               ReferencedContainer = "container:pj1.xcodeproj">
+               BuildableName = "shopspherewebTests.xctest"
+               BlueprintName = "shopspherewebTests"
+               ReferencedContainer = "container:shopsphereweb.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "pj1.app"
-            BlueprintName = "pj1"
-            ReferencedContainer = "container:pj1.xcodeproj">
+            BuildableName = "shopsphereweb.app"
+            BlueprintName = "shopsphereweb"
+            ReferencedContainer = "container:shopsphereweb.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "pj1.app"
-            BlueprintName = "pj1"
-            ReferencedContainer = "container:pj1.xcodeproj">
+            BuildableName = "shopsphereweb.app"
+            BlueprintName = "shopsphereweb"
+            ReferencedContainer = "container:shopsphereweb.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
