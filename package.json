@@ -1,5 +1,5 @@
 {
-  "name": "shop-sphere-web",
+  "name": "pj1",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -10,8 +10,27 @@
     "test": "jest"
   },
   "dependencies": {
+    "@expo/vector-icons": "^14.0.4",
+    "@react-native-async-storage/async-storage": "^2.1.0",
+    "@react-native-community/checkbox": "^0.5.17",
+    "@react-native-community/datetimepicker": "^8.2.0",
+    "@react-native-picker/picker": "^2.10.2",
+    "@react-navigation/bottom-tabs": "^7.2.0",
+    "@react-navigation/native": "^7.0.14",
+    "@react-navigation/stack": "^7.1.1",
+    "expo-font": "^13.0.2",
     "react": "18.3.1",
-    "react-native": "0.76.2"
+    "react-native": "0.76.2",
+    "react-native-date-picker": "^5.0.8",
+    "react-native-dropdown-picker": "^5.4.6",
+    "react-native-gesture-handler": "^2.21.2",
+    "react-native-material-icons": "^1.0.3",
+    "react-native-material-menu": "^2.0.0",
+    "react-native-picker-select": "^9.3.1",
+    "react-native-reanimated": "^3.16.6",
+    "react-native-safe-area-context": "^5.0.0",
+    "react-native-screens": "^4.4.0",
+    "react-native-vector-icons": "^10.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
