@@ -8,6 +8,7 @@ import {
   Image,
   ScrollView,
   FlatList,
+  SafeAreaView,
 } from 'react-native';
 
 export default function SearchPage() {
@@ -124,116 +125,122 @@ export default function SearchPage() {
 
   if (!isSearching) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.heading}>Search for a User</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter email"
-          value={searchTerm}
-          onChangeText={setSearchTerm}
-        />
-        <TouchableOpacity style={styles.button} onPress={handleSearch}>
-          <Text style={styles.buttonText}>Search</Text>
-        </TouchableOpacity>
-      </View>
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.container}>
+          <Text style={styles.heading}>Search for a User</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter email"
+            value={searchTerm}
+            onChangeText={setSearchTerm}
+          />
+          <TouchableOpacity style={styles.button} onPress={handleSearch}>
+            <Text style={styles.buttonText}>Search</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.heading}>User Details</Text>
-      <View style={styles.profileContainer}>
-        <Image
-          source={{ uri: data.credentials.profilePicture }}
-          style={styles.profilePicture}
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView style={styles.container}>
+        <Text style={styles.heading}>User Details</Text>
+        <View style={styles.profileContainer}>
+          <Image
+            source={{ uri: data.credentials.profilePicture }}
+            style={styles.profilePicture}
+          />
+          <Text style={styles.text}>
+            <Text style={styles.bold}>Name:</Text> {data.credentials.name}
+          </Text>
+          <Text style={styles.text}>
+            <Text style={styles.bold}>Email:</Text> {data.credentials.email}
+          </Text>
+          <Text style={styles.text}>
+            <Text style={styles.bold}>Role:</Text> {data.credentials.role}
+          </Text>
+        </View>
+
+        {/* Events Section */}
+        <Text style={styles.sectionHeading}>Saved Events</Text>
+        <FlatList
+          data={data.savedEvents}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => {
+            const isSelected = checkedEvents.includes(item);
+            return (
+              <TouchableOpacity
+                style={[
+                  styles.listItem,
+                  { backgroundColor: getLabelColor(item.label) },
+                  isSelected && styles.selectedItem,
+                ]}
+                onPress={() => handleEventSelection(item)}
+              >
+                <Text style={styles.text}>
+                  <Text style={styles.bold}>Title:</Text> {item.title}
+                </Text>
+                <Text style={styles.text}>
+                  <Text style={styles.bold}>Label:</Text> {item.label}
+                </Text>
+                <Text style={styles.text}>
+                  <Text style={styles.bold}>Day:</Text>{' '}
+                  {new Date(item.day).toDateString()}
+                </Text>
+              </TouchableOpacity>
+            );
+          }}
         />
-        <Text style={styles.text}>
-          <Text style={styles.bold}>Name:</Text> {data.credentials.name}
-        </Text>
-        <Text style={styles.text}>
-          <Text style={styles.bold}>Email:</Text> {data.credentials.email}
-        </Text>
-        <Text style={styles.text}>
-          <Text style={styles.bold}>Role:</Text> {data.credentials.role}
-        </Text>
-      </View>
+        <TouchableOpacity style={styles.button} onPress={logCheckedEvents}>
+          <Text style={styles.buttonText}>Add Events to Your Account</Text>
+        </TouchableOpacity>
 
-      {/* Events Section */}
-      <Text style={styles.sectionHeading}>Saved Events</Text>
-      <FlatList
-        data={data.savedEvents}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => {
-          const isSelected = checkedEvents.includes(item);
-          return (
-            <TouchableOpacity
-              style={[
-                styles.listItem,
-                { backgroundColor: getLabelColor(item.label) },
-                isSelected && styles.selectedItem,
-              ]}
-              onPress={() => handleEventSelection(item)}
-            >
-              <Text style={styles.text}>
-                <Text style={styles.bold}>Title:</Text> {item.title}
-              </Text>
-              <Text style={styles.text}>
-                <Text style={styles.bold}>Label:</Text> {item.label}
-              </Text>
-              <Text style={styles.text}>
-                <Text style={styles.bold}>Day:</Text>{' '}
-                {new Date(item.day).toDateString()}
-              </Text>
-            </TouchableOpacity>
-          );
-        }}
-      />
-      <TouchableOpacity style={styles.button} onPress={logCheckedEvents}>
-        <Text style={styles.buttonText}>Add Events to Your Account</Text>
-      </TouchableOpacity>
-
-      {/* Tasks Section */}
-      <Text style={styles.sectionHeading}>Saved Tasks</Text>
-      <FlatList
-        data={data.savedTasks}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => {
-          const isSelected = checkedTasks.includes(item);
-          return (
-            <TouchableOpacity
-              style={[styles.listItem, isSelected && styles.selectedItem]}
-              onPress={() => handleTaskSelection(item)}
-            >
-              <Text style={styles.text}>
-                <Text style={styles.bold}>Title:</Text> {item.title}
-              </Text>
-              <Text style={styles.text}>
-                <Text style={styles.bold}>Date:</Text>{' '}
-                {new Date(item.date).toDateString()}
-              </Text>
-              <Text style={styles.text}>
-                <Text style={styles.bold}>Start Time:</Text> {item.startTime}
-              </Text>
-              <Text style={styles.text}>
-                <Text style={styles.bold}>End Time:</Text> {item.endTime}
-              </Text>
-            </TouchableOpacity>
-          );
-        }}
-      />
-      <TouchableOpacity style={styles.button} onPress={logCheckedTasks}>
-        <Text style={styles.buttonText}>Add Tasks to Your Account</Text>
-      </TouchableOpacity>
-    </ScrollView>
+        {/* Tasks Section */}
+        <Text style={styles.sectionHeading}>Saved Tasks</Text>
+        <FlatList
+          data={data.savedTasks}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => {
+            const isSelected = checkedTasks.includes(item);
+            return (
+              <TouchableOpacity
+                style={[styles.listItem, isSelected && styles.selectedItem]}
+                onPress={() => handleTaskSelection(item)}
+              >
+                <Text style={styles.text}>
+                  <Text style={styles.bold}>Title:</Text> {item.title}
+                </Text>
+                <Text style={styles.text}>
+                  <Text style={styles.bold}>Date:</Text>{' '}
+                  {new Date(item.date).toDateString()}
+                </Text>
+                <Text style={styles.text}>
+                  <Text style={styles.bold}>Start Time:</Text> {item.startTime}
+                </Text>
+                <Text style={styles.text}>
+                  <Text style={styles.bold}>End Time:</Text> {item.endTime}
+                </Text>
+              </TouchableOpacity>
+            );
+          }}
+        />
+        <TouchableOpacity style={styles.button} onPress={logCheckedTasks}>
+          <Text style={styles.buttonText}>Add Tasks to Your Account</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
   container: {
-    marginTop: 60,
     flex: 1,
     padding: 16,
-    backgroundColor: '#fff',
   },
   heading: {
     fontSize: 24,
@@ -284,13 +291,13 @@ const styles = StyleSheet.create({
   },
   listItem: {
     padding: 12,
-    borderWidth: 1,
-    borderColor: '#ccc',
     borderRadius: 8,
     marginBottom: 8,
+    borderWidth: 1,
+    borderColor: '#ccc',
   },
   selectedItem: {
-    borderColor: '#007bff',
+    borderColor: '#007BFF',
     borderWidth: 2,
   },
 });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, SafeAreaView } from 'react-native';
 import userData from '../userDataBackend/userData'; // Adjust the path as necessary
 
 export default function ListScreen() {
@@ -18,41 +18,45 @@ export default function ListScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>Events</Text>
-      {savedEvents.map((event) => (
-        <View
-          key={event.id}
-          style={[styles.card, { backgroundColor: getLabelColor(event.label) }]}
-        >
-          <Text style={styles.title}>{event.title}</Text>
-          <Text style={styles.description}>{event.description}</Text>
-          <Text style={styles.label}>Label: {event.label}</Text>
-          <Text style={styles.day}>Day: {new Date(event.day).toDateString()}</Text>
-        </View>
-      ))}
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.header}>Events</Text>
+        {savedEvents.map((event) => (
+          <View
+            key={event.id}
+            style={[styles.card, { backgroundColor: getLabelColor(event.label) }]}
+          >
+            <Text style={styles.title}>{event.title}</Text>
+            <Text style={styles.description}>{event.description}</Text>
+            <Text style={styles.label}>Label: {event.label}</Text>
+            <Text style={styles.day}>Day: {new Date(event.day).toDateString()}</Text>
+          </View>
+        ))}
 
-      <Text style={styles.header}>Tasks</Text>
-      {savedTasks.map((task) => (
-        <View key={task.id} style={[styles.card, styles.taskCard]}>
-          <Text style={styles.title}>{task.title}</Text>
-          <Text style={styles.description}>{task.description}</Text>
-          <Text style={styles.date}>Date: {task.date}</Text>
-          <Text style={styles.time}>
-            Time: {task.startTime} - {task.endTime}
-          </Text>
-          <Text style={styles.reminder}>Reminder: {task.reminder}</Text>
-        </View>
-      ))}
-    </ScrollView>
+        <Text style={styles.header}>Tasks</Text>
+        {savedTasks.map((task) => (
+          <View key={task.id} style={[styles.card, styles.taskCard]}>
+            <Text style={styles.title}>{task.title}</Text>
+            <Text style={styles.description}>{task.description}</Text>
+            <Text style={styles.date}>Date: {task.date}</Text>
+            <Text style={styles.time}>
+              Time: {task.startTime} - {task.endTime}
+            </Text>
+            <Text style={styles.reminder}>Reminder: {task.reminder}</Text>
+          </View>
+        ))}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#f8f9fa', // Matches the background of your app
+  },
   container: {
-    marginTop:60,
     padding: 16,
-    backgroundColor: '#f8f9fa',
   },
   header: {
     fontSize: 24,

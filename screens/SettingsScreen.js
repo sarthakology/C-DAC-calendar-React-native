@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import { 
+  StyleSheet, 
+  Text, 
+  View, 
+  TouchableOpacity, 
+  KeyboardAvoidingView, 
+  Platform, 
+  SafeAreaView 
+} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -87,98 +95,102 @@ const SettingsScreen = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <View>
-        <Text style={styles.header}>Language and Region</Text>
+    <SafeAreaView style={styles.safeArea}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <View>
+          <Text style={styles.header}>Language and Region</Text>
 
-        {/* Language Selection */}
-        <View style={[styles.dropdownWrapper, { zIndex: 6 }]}>
-          <Text style={styles.label}>Language</Text>
-          <DropDownPicker
-            open={openLanguage}
-            value={language}
-            items={languageOptions}
-            setOpen={setOpenLanguage}
-            setValue={setLanguage}
-            style={styles.dropdown}
-            dropDownContainerStyle={styles.dropdownContainer}
-          />
+          {/* Language Selection */}
+          <View style={[styles.dropdownWrapper, { zIndex: 6 }]}>
+            <Text style={styles.label}>Language</Text>
+            <DropDownPicker
+              open={openLanguage}
+              value={language}
+              items={languageOptions}
+              setOpen={setOpenLanguage}
+              setValue={setLanguage}
+              style={styles.dropdown}
+              dropDownContainerStyle={styles.dropdownContainer}
+            />
+          </View>
+
+          {/* Country Selection */}
+          <View style={[styles.dropdownWrapper, { zIndex: 5 }]}>
+            <Text style={styles.label}>Country</Text>
+            <DropDownPicker
+              open={openCountry}
+              value={country}
+              items={countryOptions}
+              setOpen={setOpenCountry}
+              setValue={setCountry}
+              style={styles.dropdown}
+              dropDownContainerStyle={styles.dropdownContainer}
+            />
+          </View>
+
+          {/* Date Format Selection */}
+          <View style={[styles.dropdownWrapper, { zIndex: 4 }]}>
+            <Text style={styles.label}>Date Format</Text>
+            <DropDownPicker
+              open={openDateFormat}
+              value={dateFormat}
+              items={dateFormatOptions}
+              setOpen={setOpenDateFormat}
+              setValue={setDateFormat}
+              style={styles.dropdown}
+              dropDownContainerStyle={styles.dropdownContainer}
+            />
+          </View>
+
+          {/* Time Format Selection */}
+          <View style={[styles.dropdownWrapper, { zIndex: 3 }]}>
+            <Text style={styles.label}>Time Format</Text>
+            <DropDownPicker
+              open={openTimeFormat}
+              value={timeFormat}
+              items={timeFormatOptions}
+              setOpen={setOpenTimeFormat}
+              setValue={setTimeFormat}
+              style={styles.dropdown}
+              dropDownContainerStyle={styles.dropdownContainer}
+            />
+          </View>
+
+          {/* Primary Time Zone Selection */}
+          <View style={[styles.dropdownWrapper, { zIndex: 2 }]}>
+            <Text style={styles.label}>Primary Time Zone</Text>
+            <DropDownPicker
+              open={openPrimaryTZ}
+              value={primaryTimeZone}
+              items={timezoneOptions}
+              setOpen={setOpenPrimaryTZ}
+              setValue={setPrimaryTimeZone}
+              style={styles.dropdown}
+              dropDownContainerStyle={styles.dropdownContainer}
+            />
+          </View>
+
+          {/* Save Changes Button */}
+          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+            <Text style={styles.buttonText}>Save Changes</Text>
+          </TouchableOpacity>
         </View>
-
-        {/* Country Selection */}
-        <View style={[styles.dropdownWrapper, { zIndex: 5 }]}>
-          <Text style={styles.label}>Country</Text>
-          <DropDownPicker
-            open={openCountry}
-            value={country}
-            items={countryOptions}
-            setOpen={setOpenCountry}
-            setValue={setCountry}
-            style={styles.dropdown}
-            dropDownContainerStyle={styles.dropdownContainer}
-          />
-        </View>
-
-        {/* Date Format Selection */}
-        <View style={[styles.dropdownWrapper, { zIndex: 4 }]}>
-          <Text style={styles.label}>Date Format</Text>
-          <DropDownPicker
-            open={openDateFormat}
-            value={dateFormat}
-            items={dateFormatOptions}
-            setOpen={setOpenDateFormat}
-            setValue={setDateFormat}
-            style={styles.dropdown}
-            dropDownContainerStyle={styles.dropdownContainer}
-          />
-        </View>
-
-        {/* Time Format Selection */}
-        <View style={[styles.dropdownWrapper, { zIndex: 3 }]}>
-          <Text style={styles.label}>Time Format</Text>
-          <DropDownPicker
-            open={openTimeFormat}
-            value={timeFormat}
-            items={timeFormatOptions}
-            setOpen={setOpenTimeFormat}
-            setValue={setTimeFormat}
-            style={styles.dropdown}
-            dropDownContainerStyle={styles.dropdownContainer}
-          />
-        </View>
-
-        {/* Primary Time Zone Selection */}
-        <View style={[styles.dropdownWrapper, { zIndex: 2 }]}>
-          <Text style={styles.label}>Primary Time Zone</Text>
-          <DropDownPicker
-            open={openPrimaryTZ}
-            value={primaryTimeZone}
-            items={timezoneOptions}
-            setOpen={setOpenPrimaryTZ}
-            setValue={setPrimaryTimeZone}
-            style={styles.dropdown}
-            dropDownContainerStyle={styles.dropdownContainer}
-          />
-        </View>
-
-        {/* Save Changes Button */}
-        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-          <Text style={styles.buttonText}>Save Changes</Text>
-        </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#f4f4f4',
+  },
   container: {
-    marginTop: 40,
     flex: 1,
     padding: 20,
-    backgroundColor: '#f4f4f4',
   },
   header: {
     fontSize: 24,

@@ -7,7 +7,7 @@ export default function LoginScreen({ navigation }) {
 
   const handleLogin = () => {
     // Add your login logic here
-    navigation.navigate('Main'); // Navigate to the main screen
+    navigation.navigate('main'); // Navigate to the main screen
   };
 
   return (
