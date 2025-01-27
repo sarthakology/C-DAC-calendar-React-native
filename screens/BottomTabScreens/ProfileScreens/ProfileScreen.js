@@ -1,28 +1,40 @@
-import React from 'react';
+import React,{ useContext } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import userData from '../userDataBackend/userData'; // Adjust the path as needed
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import userData from '../../../userDataBackend/userData';
+import GlobalContext from "../../../context/GlobalContext";
 
 export default function ProfileScreen({ navigation }) {
+  const { dispatchCalEvent } = useContext(GlobalContext);
   const { name, gender, role, phno, email, profilePicture } = userData;
 
   const handleEditProfile = () => {
     navigation.navigate('EditProfile');
   };
 
-  const handleLogout = () => {
-    Alert.alert('Logout', 'You have been logged out.');
-    navigation.navigate('Login');
+  const handleLogout = async () => {
+    try {
+      // Clear savedEvents from AsyncStorage
+      await AsyncStorage.removeItem('savedEvents');
+      console.log('savedEvents cleared from AsyncStorage.');
+      dispatchCalEvent({ type: 'deleteAll' });
+      Alert.alert('Logout', 'You have been logged out.');
+      navigation.navigate('Login');
+    } catch (error) {
+      console.error('Error clearing savedEvents from AsyncStorage:', error);
+    }
   };
 
   const handleHelp = () => {
     navigation.navigate('Help');
   };
 
-  const handleAdmin = () => {
+  const handleAdmin = () => { 
     navigation.navigate('Admin');
   };
+
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -31,7 +43,7 @@ export default function ProfileScreen({ navigation }) {
         <TouchableOpacity onPress={handleHelp} style={styles.iconButton}>
           <Ionicons name="help-circle-outline" size={30} color="#007bff" />
         </TouchableOpacity>
-        {role === "admin" && (
+        {role === 'admin' && (
           <TouchableOpacity onPress={handleAdmin} style={styles.iconButton}>
             <Ionicons name="person-circle-outline" size={30} color="#007bff" />
           </TouchableOpacity>
@@ -39,10 +51,7 @@ export default function ProfileScreen({ navigation }) {
       </View>
 
       <View style={styles.container}>
-        <Image
-          source={{ uri: profilePicture }}
-          style={styles.profilePicture}
-        />
+        <Image source={{ uri: profilePicture }} style={styles.profilePicture} />
         <Text style={styles.name}>{name}</Text>
 
         <View style={styles.infoContainer}>

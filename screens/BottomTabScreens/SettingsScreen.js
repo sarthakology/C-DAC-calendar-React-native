@@ -1,45 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  StyleSheet, 
-  Text, 
-  View, 
-  TouchableOpacity, 
-  KeyboardAvoidingView, 
-  Platform, 
-  SafeAreaView 
+import React, {useState, useEffect} from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const SettingsScreen = () => {
+const SettingsScreen = ({navigation}) => {
   // Demo data
   const languageOptions = [
-    { label: 'English', value: 'English' },
-    { label: 'Spanish', value: 'Spanish' },
-    { label: 'French', value: 'French' },
+    {label: 'English', value: 'English'},
+    {label: 'Spanish', value: 'Spanish'},
+    {label: 'French', value: 'French'},
   ];
 
   const countryOptions = [
-    { label: 'USA', value: 'USA' },
-    { label: 'Canada', value: 'Canada' },
-    { label: 'India', value: 'India' },
+    {label: 'USA', value: 'USA'},
+    {label: 'Canada', value: 'Canada'},
+    {label: 'India', value: 'India'},
   ];
 
   const dateFormatOptions = [
-    { label: 'MM/DD/YYYY', value: 'MM/DD/YYYY' },
-    { label: 'DD/MM/YYYY', value: 'DD/MM/YYYY' },
-    { label: 'YYYY/MM/DD', value: 'YYYY/MM/DD' },
+    {label: 'MM/DD/YYYY', value: 'MM/DD/YYYY'},
+    {label: 'DD/MM/YYYY', value: 'DD/MM/YYYY'},
+    {label: 'YYYY/MM/DD', value: 'YYYY/MM/DD'},
   ];
 
   const timezoneOptions = [
-    { label: 'GMT', value: 'GMT' },
-    { label: 'UTC', value: 'UTC' },
-    { label: 'IST', value: 'IST' },
+    {label: 'GMT', value: 'GMT'},
+    {label: 'UTC', value: 'UTC'},
+    {label: 'IST', value: 'IST'},
   ];
 
   const timeFormatOptions = [
-    { label: '1:00pm', value: '1:00pm' },
-    { label: '13:00', value: '13:00' },
+    {label: '1:00pm', value: '1:00pm'},
+    {label: '13:00', value: '13:00'},
   ];
 
   // State management for dropdowns
@@ -89,6 +89,8 @@ const SettingsScreen = () => {
     try {
       await AsyncStorage.setItem('userSettings', JSON.stringify(settings));
       console.log('Settings saved:', settings);
+
+      navigation.goBack();
     } catch (error) {
       console.error('Error saving settings:', error);
     }
@@ -98,13 +100,12 @@ const SettingsScreen = () => {
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
         style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <View>
           <Text style={styles.header}>Language and Region</Text>
 
           {/* Language Selection */}
-          <View style={[styles.dropdownWrapper, { zIndex: 6 }]}>
+          <View style={[styles.dropdownWrapper, {zIndex: 6}]}>
             <Text style={styles.label}>Language</Text>
             <DropDownPicker
               open={openLanguage}
@@ -118,7 +119,7 @@ const SettingsScreen = () => {
           </View>
 
           {/* Country Selection */}
-          <View style={[styles.dropdownWrapper, { zIndex: 5 }]}>
+          <View style={[styles.dropdownWrapper, {zIndex: 5}]}>
             <Text style={styles.label}>Country</Text>
             <DropDownPicker
               open={openCountry}
@@ -132,7 +133,7 @@ const SettingsScreen = () => {
           </View>
 
           {/* Date Format Selection */}
-          <View style={[styles.dropdownWrapper, { zIndex: 4 }]}>
+          <View style={[styles.dropdownWrapper, {zIndex: 4}]}>
             <Text style={styles.label}>Date Format</Text>
             <DropDownPicker
               open={openDateFormat}
@@ -146,7 +147,7 @@ const SettingsScreen = () => {
           </View>
 
           {/* Time Format Selection */}
-          <View style={[styles.dropdownWrapper, { zIndex: 3 }]}>
+          <View style={[styles.dropdownWrapper, {zIndex: 3}]}>
             <Text style={styles.label}>Time Format</Text>
             <DropDownPicker
               open={openTimeFormat}
@@ -160,7 +161,7 @@ const SettingsScreen = () => {
           </View>
 
           {/* Primary Time Zone Selection */}
-          <View style={[styles.dropdownWrapper, { zIndex: 2 }]}>
+          <View style={[styles.dropdownWrapper, {zIndex: 2}]}>
             <Text style={styles.label}>Primary Time Zone</Text>
             <DropDownPicker
               open={openPrimaryTZ}

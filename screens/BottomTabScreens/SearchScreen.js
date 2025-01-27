@@ -11,7 +11,7 @@ import {
   SafeAreaView,
 } from 'react-native';
 
-export default function SearchPage() {
+export default function SearchScreen() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearching, setIsSearching] = useState(false);
 

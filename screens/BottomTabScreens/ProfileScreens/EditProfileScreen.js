@@ -10,7 +10,7 @@ import {
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import userData from '../userDataBackend/userData'; // Import userData
+import userData from '../../../userDataBackend/userData';
 
 export default function EditProfileScreen({ navigation }) {
   const [name, setName] = useState(userData.name);

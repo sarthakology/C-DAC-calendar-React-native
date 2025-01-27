@@ -1,13 +1,12 @@
-import React from 'react';
+import React,{ useContext } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import LoginScreen from '../screens/LoginScreen';
-import RegisterScreen from '../screens/RegisterScreen';
-import ProfileScreen from '../screens/ProfileScreen';
-import EditProfileScreen from '../screens/EditProfileScreen';
+import LoginScreen from '../screens/AuthScreens/LoginScreen';
+import RegisterScreen from '../screens/AuthScreens/RegisterScreen';
 
 import HelpScreen from '../screens/HelpScreen';
+import SettingsScreen from '../screens/BottomTabScreens/SettingsScreen';
 
-import AdminPanelScreen from '../screens/AdminPanelScreen';
+import AdminPanelScreen from '../screens/AdminScreens/AdminPanelScreen';
 // Admin Screens
 import CountriesAdmin from '../screens/AdminScreens/CountriesAdmin';
 import DeleteUsersAdmin from '../screens/AdminScreens/DeleteUsersAdmin';
@@ -18,10 +17,14 @@ import TimezonesAdmin from '../screens/AdminScreens/TimezonesAdmin';
 
 import BottomTabs from './BottomTabNavigator';
 
+import EventModel from '../components/EventModel';
+import GlobalContext from "../context/GlobalContext";
+
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
-  return (
+  const { showEventModal } = useContext(GlobalContext); // Access savedEvents from context
+  return (<>
     <Stack.Navigator initialRouteName="main">
 
       <Stack.Screen name="main" component={BottomTabs} options={{ headerShown: false }} />
@@ -30,15 +33,8 @@ export default function AppNavigator() {
       <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
 
-      {/*profile Screens*/}
-      <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="EditProfile" component={EditProfileScreen} options={{ headerShown: false }} />
-
       <Stack.Screen name="Help" component={HelpScreen} options={{ headerShown: false }} />
-
-
-
-
+      <Stack.Screen name="Setting" component={SettingsScreen} options={{ headerShown: false }} />
 
       {/*Admin only Screens*/}
       <Stack.Screen name="Admin" component={AdminPanelScreen} options={{ headerShown: false }} />
@@ -50,5 +46,9 @@ export default function AppNavigator() {
       <Stack.Screen name="roleUpdate" component={RoleUpdateAdmin} options={{ headerShown: false }} />
       <Stack.Screen name="timezones" component={TimezonesAdmin} options={{ headerShown: false }} />
     </Stack.Navigator>
+    
+    {/*this is for toggle event creaing model */}
+    {showEventModal &&<EventModel/>}
+    </>
   );
 }
