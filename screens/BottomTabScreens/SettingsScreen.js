@@ -17,7 +17,7 @@ const SettingsScreen = ({navigation}) => {
     {label: 'English', value: 'English'},
     {label: 'Spanish', value: 'Spanish'},
     {label: 'French', value: 'French'},
-  ];
+  ];  
 
   const countryOptions = [
     {label: 'USA', value: 'USA'},
