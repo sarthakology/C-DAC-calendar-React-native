@@ -7,7 +7,7 @@ import userData from '../../../userDataBackend/userData';
 import GlobalContext from "../../../context/GlobalContext";
 
 export default function ProfileScreen({ navigation }) {
-  const { dispatchCalEvent } = useContext(GlobalContext);
+  const { dispatchCalEvent, dispatchCalTask } = useContext(GlobalContext);
   const { name, gender, role, phno, email, profilePicture } = userData;
 
   const handleEditProfile = () => {
@@ -16,16 +16,23 @@ export default function ProfileScreen({ navigation }) {
 
   const handleLogout = async () => {
     try {
-      // Clear savedEvents from AsyncStorage
+      // Clear savedEvents and savedTasks from AsyncStorage
       await AsyncStorage.removeItem('savedEvents');
-      console.log('savedEvents cleared from AsyncStorage.');
+      await AsyncStorage.removeItem('savedTasks');
+  
+      console.log('savedEvents and savedTasks cleared from AsyncStorage.');
+  
+      // Clear state
       dispatchCalEvent({ type: 'deleteAll' });
+      dispatchCalTask({ type: 'deleteAll' });
+  
       Alert.alert('Logout', 'You have been logged out.');
       navigation.navigate('Login');
     } catch (error) {
-      console.error('Error clearing savedEvents from AsyncStorage:', error);
+      console.error('Error clearing savedEvents and savedTasks from AsyncStorage:', error);
     }
   };
+  
 
   const handleHelp = () => {
     navigation.navigate('Help');
@@ -46,7 +53,7 @@ export default function ProfileScreen({ navigation }) {
         {role === 'admin' && (
           <TouchableOpacity onPress={handleAdmin} style={styles.iconButton}>
             <Ionicons name="person-circle-outline" size={30} color="#007bff" />
-          </TouchableOpacity>
+          </TouchableOpacity> 
         )}
       </View>
 

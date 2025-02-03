@@ -7,13 +7,14 @@ import SearchScreen from '../screens/BottomTabScreens/SearchScreen';
 import ListScreen from '../screens/BottomTabScreens/ListScreen';
 import SettingsScreen from '../screens/BottomTabScreens/SettingsScreen';
 import ProfileNavigator from '../navigators/ProfileNavigator'
+import userData from '../userDataBackend/userData';
 
 import { Image, StyleSheet } from 'react-native';
 
-// Replace Settings with Profile
 const Tab = createBottomTabNavigator();
 
 export default function BottomTabs() {
+  const { profilePicture } = userData;
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -25,7 +26,6 @@ export default function BottomTabs() {
           } else if (route.name === 'Search') {
             iconName = focused ? 'search' : 'search-outline';
           } else if (route.name === 'Setting') {
-            // Change to settings icon
             iconName = focused ? 'settings' : 'settings-outline';
           } else if (route.name === 'List') {
             iconName = focused ? 'list' : 'list-outline';
@@ -33,8 +33,7 @@ export default function BottomTabs() {
             return (
               <Image
                 source={{
-                  uri: "https://firebasestorage.googleapis.com/v0/b/fir-44d31.appspot.com/o/images%2Fsample1.jpgca9a9b72-3770-49e6-8281-7ae5e6f657d3?alt=media&token=2f514c54-2925-46bd-8721-9f47051657e3",
-                }}
+                  uri: profilePicture }}
                 style={[
                   styles.profileIcon,
                   { borderColor: focused ? 'black' : 'gray' },

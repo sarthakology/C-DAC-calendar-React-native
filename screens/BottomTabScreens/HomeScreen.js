@@ -9,8 +9,9 @@ import {
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { getMonth } from "../../util";
-import DayModal from "../../components/DayModel";
+import DayModal from "../../modals/DayModel";
 import GlobalContext from "../../context/GlobalContext";
+import TaskList from "../../components/TaskList"; 
 
 const getEventDots = (dayDate, savedEvents) => {
   const eventDots = savedEvents.filter(
@@ -161,10 +162,14 @@ export default function HomeScreen({ navigation }) {
             onDayPress={handleDayPress}
             savedEvents={savedEvents}
           />
+          
+          {/* Tasks Section Below Calendar */}
+          <TaskList monthIndex={monthIndex} />
         </View>
       </ScrollView>
     </SafeAreaView>
   );
+  
 }
 
 const styles = StyleSheet.create({
@@ -189,9 +194,5 @@ const styles = StyleSheet.create({
   blueDot: { width: 5, height: 5, borderRadius: 4, backgroundColor: "white", borderWidth: 1, borderColor: "blue", marginLeft: 1.5, marginRight: 1.5 },
   redDot: { width: 5, height: 5, borderRadius: 4, backgroundColor: "white", borderWidth: 1, borderColor: "red", marginLeft: 1.5, marginRight: 1.5 },
   purpleDot: { width: 5, height: 5, borderRadius: 4, backgroundColor: "white", borderWidth: 1, borderColor: "purple", marginLeft: 1.5, marginRight: 1.5 },
-  taskCard: { backgroundColor: "#fff", padding: 10, marginBottom: 10, borderRadius: 10, borderWidth: 1, borderColor: "#ddd" },
-  taskTitle: { fontSize: 18, fontWeight: "bold", color: "#333" },
-  taskDate: { fontSize: 14, color: "#666" },
-  taskDescription: { fontSize: 12, color: "#888" },
-  todayText: { color: "#007bff", fontWeight: "bold" },
+  todayText: { color: "#007bff", fontWeight: "bold" },  
 });

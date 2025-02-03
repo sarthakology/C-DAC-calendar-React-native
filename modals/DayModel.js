@@ -17,7 +17,7 @@ const getLabelColor = (label) => {
 };
 
 const DayModal = ({ isVisible, onClose, selectedDay, events }) => {
-  const { setSelectedEvent, setShowEventModal } = useContext(GlobalContext);
+  const { setSelectedEvent, setShowEventModal, setShowTaskModal } = useContext(GlobalContext);
 
   // Function to handle event card click
   const handleEventClick = (event) => {
@@ -30,7 +30,7 @@ const DayModal = ({ isVisible, onClose, selectedDay, events }) => {
   };
 
   const handleCreateTask = () => {
-    console.log("Create Task clicked");
+    setShowTaskModal(true)
   };
 
   return (

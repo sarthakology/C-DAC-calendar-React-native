@@ -17,13 +17,14 @@ import TimezonesAdmin from '../screens/AdminScreens/TimezonesAdmin';
 
 import BottomTabs from './BottomTabNavigator';
 
-import EventModel from '../components/EventModel';
+import EventModel from '../modals/EventModel';
 import GlobalContext from "../context/GlobalContext";
+import TaskModal from '../modals/TaskModal';
 
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
-  const { showEventModal } = useContext(GlobalContext); // Access savedEvents from context
+  const { showEventModal, showTaskModal } = useContext(GlobalContext); // Access savedEvents from context
   return (<>
     <Stack.Navigator initialRouteName="main">
 
@@ -47,8 +48,10 @@ export default function AppNavigator() {
       <Stack.Screen name="timezones" component={TimezonesAdmin} options={{ headerShown: false }} />
     </Stack.Navigator>
     
-    {/*this is for toggle event creaing model */}
+    {/*this is for toggling  model */}
+    
     {showEventModal &&<EventModel/>}
+    {showTaskModal && <TaskModal/>}
     </>
   );
 }

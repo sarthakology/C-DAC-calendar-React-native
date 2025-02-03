@@ -1,64 +1,56 @@
-import React, {
-  useState,
-  useEffect,
-  useReducer,
-} from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import GlobalContext from "./GlobalContext";
-import dayjs from "dayjs";
-
-
+import React, {useState, useEffect, useReducer} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import GlobalContext from './GlobalContext';
+import dayjs from 'dayjs';
 
 // Reducer
-function savedEventsReducer(state, { type, payload }) {
+function savedEventsReducer(state, {type, payload}) {
   switch (type) {
-    case "push":
+    case 'push':
       return [...state, payload];
-    case "update":
-      return state.map((evt) => (evt.id === payload.id ? payload : evt));
-    case "delete":
-      return state.filter((evt) => evt.id !== payload.id);
-    case "deleteAll":
+    case 'update':
+      return state.map(evt => (evt.id === payload.id ? payload : evt));
+    case 'delete':
+      return state.filter(evt => evt.id !== payload.id);
+    case 'deleteAll':
       return [];
-    default: 
-      throw new Error("Invalid action type");
+    default:
+      throw new Error('Invalid action type');
   }
 }
 
-function savedTasksReducer(state, { type, payload }) {
+function savedTasksReducer(state, {type, payload}) {
   switch (type) {
-    case "push":
+    case 'push':
       return [...state, payload];
-    case "update":
-      return state.map((task) =>
-        task.id === payload.id ? payload : task
-      );
-    case "delete":
-      return state.filter((task) => task.id !== payload.id);
-    case "deleteAll":
+    case 'update':
+      return state.map(task => (task.id === payload.id ? payload : task));
+    case 'delete':
+      return state.filter(task => task.id !== payload.id);
+    case 'deleteAll':
       return [];
     default:
-      throw new Error("Invalid action type");
+      throw new Error('Invalid action type');
   }
 }
 
 // Initialize from AsyncStorage
 async function initEvents() {
   try {
-    const storageEvents = await AsyncStorage.getItem("savedEvents");
+    const storageEvents = await AsyncStorage.getItem('savedEvents');
     return storageEvents ? JSON.parse(storageEvents) : [];
   } catch (error) {
-    console.error("Failed to fetch events from storage", error);
+    console.error('Failed to fetch events from storage', error);
     return [];
   }
 }
 
 async function initTasks() {
   try {
-    const storageTasks = await AsyncStorage.getItem("savedTasks");
+    const storageTasks = await AsyncStorage.getItem('savedTasks');
     return storageTasks ? JSON.parse(storageTasks) : [];
   } catch (error) {
-    console.error("Failed to fetch tasks from storage", error);
+    console.error('Failed to fetch tasks from storage', error);
     return [];
   }
 }
@@ -70,14 +62,22 @@ export default function ContextWrapper(props) {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedTask, setSelectedTask] = useState(null);
 
-  const [savedEvents, dispatchCalEvent] = useReducer(savedEventsReducer, [], () => []);
-  const [savedTasks, dispatchTask] = useReducer(savedTasksReducer, [], () => []);
+  const [savedEvents, dispatchCalEvent] = useReducer(
+    savedEventsReducer,
+    [],
+    () => [],
+  );
+  const [savedTasks, dispatchCalTask] = useReducer(
+    savedTasksReducer,
+    [],
+    () => [],
+  );
 
-  // Initialize saved tasks and Events from AsyncStorage
+  // Initialize saved tasks and events from AsyncStorage
   useEffect(() => {
     const loadEvents = async () => {
       const events = await initEvents();
-      events.forEach((evt) => dispatchCalEvent({ type: "push", payload: evt }));
+      events.forEach(evt => dispatchCalEvent({type: 'push', payload: evt}));
     };
     loadEvents();
   }, []);
@@ -85,19 +85,18 @@ export default function ContextWrapper(props) {
   useEffect(() => {
     const loadTasks = async () => {
       const tasks = await initTasks();
-      tasks.forEach((task) => dispatchTask({ type: "push", payload: task }));
+      tasks.forEach(task => dispatchCalTask({type: 'push', payload: task}));
     };
     loadTasks();
   }, []);
 
-
-// Save tasks and Event to AsyncStorage whenever they change
+  // Save tasks and events to AsyncStorage whenever they change
   useEffect(() => {
     const saveEvents = async () => {
       try {
-        await AsyncStorage.setItem("savedEvents", JSON.stringify(savedEvents));
+        await AsyncStorage.setItem('savedEvents', JSON.stringify(savedEvents));
       } catch (error) {
-        console.error("Failed to save events to storage", error);
+        console.error('Failed to save events to storage', error);
       }
     };
     saveEvents();
@@ -106,15 +105,14 @@ export default function ContextWrapper(props) {
   useEffect(() => {
     const saveTasks = async () => {
       try {
-        await AsyncStorage.setItem("savedTasks", JSON.stringify(savedTasks));
+        await AsyncStorage.setItem('savedTasks', JSON.stringify(savedTasks));
       } catch (error) {
-        console.error("Failed to save tasks to storage", error);
+        console.error('Failed to save tasks to storage', error);
       }
     };
     saveTasks();
   }, [savedTasks]);
 
-  
   useEffect(() => {
     if (!showEventModal) {
       setSelectedEvent(null);
@@ -132,20 +130,24 @@ export default function ContextWrapper(props) {
       value={{
         daySelected,
         setDaySelected,
+
         showEventModal,
         setShowEventModal,
+
         showTaskModal,
         setShowTaskModal,
+
         dispatchCalEvent,
+        dispatchCalTask,
+
         selectedEvent,
-        dispatchTask,
         selectedTask,
         setSelectedEvent,
         setSelectedTask,
+
         savedEvents,
         savedTasks,
-      }}
-    >
+      }}>
       {props.children}
     </GlobalContext.Provider>
   );

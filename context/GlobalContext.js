@@ -13,7 +13,7 @@ const GlobalContext = React.createContext({
   dispatchCalEvent: () => {},
   savedEvents: [],
 
-  dispatchTask: () => {},
+  dispatchCalTask: () => {},
   savedTasks: [],
   
   selectedEvent: null,
