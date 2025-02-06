@@ -15,11 +15,12 @@ import userData from '../../../userDataBackend/userData';
 export default function EditProfileScreen({ navigation }) {
   const [name, setName] = useState(userData.name);
   const [gender, setGender] = useState(userData.gender);
-  const role = userData.role
   const [phno, setPhno] = useState(userData.phno);
-  const email = userData.email
-  const [profilePicture, setProfilePicture] = useState(userData.profilePicture);
-  const [modalVisible, setModalVisible] = useState(false); // Modal visibility state
+  const [modalVisible, setModalVisible] = useState(false);
+  
+  const role = userData.role;
+  const email = userData.email;
+  const profilePicture = userData.profilePicture;
 
   const handleSave = () => {
     const updatedData = {
@@ -40,10 +41,19 @@ export default function EditProfileScreen({ navigation }) {
     setModalVisible(false);
   };
 
+  // Navigate to ProfileImageScreen when profile picture is clicked
+  const handleProfilePictureClick = () => {
+    navigation.navigate('ProfileImage');
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <Image source={{ uri: profilePicture }} style={styles.profilePicture} />
+        {/* Profile Picture - TouchableOpacity for navigation */}
+        <TouchableOpacity onPress={handleProfilePictureClick}>
+          <Image source={{ uri: profilePicture }} style={styles.profilePicture} />
+        </TouchableOpacity>
+
         <Text style={styles.title}>Edit Profile</Text>
 
         {/* Name Input */}

@@ -76,6 +76,7 @@ const TaskCard = ({ task }) => (
 );
 
 export default function HomeScreen({ navigation }) {
+
   const { savedEvents, setDaySelected } = useContext(GlobalContext);
 
   const [monthIndex, setMonthIndex] = useState(new Date().getMonth());

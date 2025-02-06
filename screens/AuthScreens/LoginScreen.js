@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 export default function LoginScreen({ navigation }) {
+  const { t, i18n } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -16,10 +18,10 @@ export default function LoginScreen({ navigation }) {
         source={{ uri: 'https://www.cdac.in/img/cdac-logo.png' }} 
         style={styles.logo} 
       />
-      <Text style={styles.title}>Welcome Back</Text>
-      <Text style={styles.subtitle}>Please log in to your account</Text>
+      <Text style={styles.title}>{t('greeting-back')}</Text>
+      <Text style={styles.subtitle}>{t('Please log in to your account')}</Text>
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Email</Text>
+        <Text style={styles.label}>{t('Email')}</Text>
         <TextInput
           style={styles.input}
           placeholder="name@company.com"
@@ -29,7 +31,7 @@ export default function LoginScreen({ navigation }) {
         />
       </View>
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Password</Text>
+        <Text style={styles.label}>{t('Password')}</Text>
         <TextInput
           style={styles.input}
           placeholder="••••••••"
@@ -39,12 +41,12 @@ export default function LoginScreen({ navigation }) {
         />
       </View>
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
+        <Text style={styles.buttonText}>{t('Login')}</Text>
       </TouchableOpacity>
       <Text style={styles.footerText}>
-        Don't have an account?{' '}
+      {t("Don't have an account?")}{' '}
         <Text style={styles.link} onPress={() => navigation.navigate('Register')}>
-          Sign up here
+        {t('Sign up here')}
         </Text>
       </Text>
     </View>

@@ -19,7 +19,6 @@ export default function ListScreen() {
     setSelectedTask,
     setShowTaskModal,
   } = useContext(GlobalContext);
-  console.log(savedTasks)
 
   const getLabelColor = (label) => {
     const colors = {

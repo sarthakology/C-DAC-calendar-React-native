@@ -28,7 +28,7 @@ export default function TaskList({ monthIndex }) {
       dispatchCalTask({ type: "update", payload: updatedTask });
     }
   };
-
+ 
   return (
     <View style={styles.tasksContainer}>
       <Text style={styles.tasksHeader}>Tasks for the Month</Text>
