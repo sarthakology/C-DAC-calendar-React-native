@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import API_URLS from '../../ApiUrls';
 import GlobalContext from "../../context/GlobalContext";
 import refreshJWTToken from '../../services/RefreshJWTToken';
+// import { DevSettings } from 'react-native';
 
 export default function LoginScreen({ navigation }) {
   const { t } = useTranslation();
@@ -13,44 +14,50 @@ export default function LoginScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const { dispatchCalEvent, dispatchCalTask } = useContext(GlobalContext);
 
+
   const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert("Error", "Please enter both email and password");
       return;
     }
-    
-        setLoading(true);
-
+  
+    setLoading(true);
+  
     await AsyncStorage.removeItem('savedEvents');
     await AsyncStorage.removeItem('savedTasks');
     dispatchCalEvent({ type: 'deleteAll' });
     dispatchCalTask({ type: 'deleteAll' });
-
+  
     try {
       const response = await fetch(API_URLS.LOGIN, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ 
+          email: email.toLowerCase(),
+          password 
+        }),
       });
-
+  
       const data = await response.json();
-
+  
       if (!response.ok) {
         throw new Error(data.message || "Login failed");
       }
-
+  
       // Store tokens in AsyncStorage
       await AsyncStorage.setItem('accessToken', data.accessToken);
       await AsyncStorage.setItem('refreshToken', data.refreshToken);
-
+  
       Alert.alert("Success", "Login successful!");
-
+  
       // Fetch events and tasks
       await fetchAndDispatchEvents();
       await fetchAndDispatchTasks();
-
+  
+      // DevSettings.reload(); // 🔄 Reloads the entire app
+  
       navigation.goBack(); // Navigate to main screen
     } catch (error) {
       Alert.alert("Login Failed", error.message);
@@ -58,6 +65,7 @@ export default function LoginScreen({ navigation }) {
       setLoading(false);
     }
   };
+  
 
   const fetchAndDispatchEvents = async () => {
     try {

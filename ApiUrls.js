@@ -4,33 +4,34 @@ const API_URLS = {
 
   // ------------------------ USER ROUTE ------------------------ //
   // ---------------------- REQUIRE TOKEN ---------------------- //
-    //login register
+
+  //login register
   LOGIN: `${API_BASE_URL}/auth/token`,
   REGISTER: `${API_BASE_URL}/auth/register`,
 
   //refresh token
-  REFRESH_TOKEN: `${API_BASE_URL}/auth/refreshToken`,//
+  REFRESH_TOKEN: `${API_BASE_URL}/auth/refreshToken`,
 
   //user
-  GET_USER_PROFILE: `${API_BASE_URL}/auth/get/user`,//
+  GET_USER_PROFILE: `${API_BASE_URL}/auth/get/user`,
 
-  UPDATE_USER_PROFILE: `${API_BASE_URL}/auth/update/user`,//
+  UPDATE_USER_PROFILE: `${API_BASE_URL}/auth/update/user`,
   SEARCH_USER_PROFILE: (email) => `${API_BASE_URL}/auth/search/${email}`,//
   
   //get events/task
   // GET_USER_EVENTS: `${API_BASE_URL}/event`,
   // GET_USER_TASKS: `${API_BASE_URL}/task`,
 
-  GET_USER_EVENTS: `${API_BASE_URL}/auth/event`,//
-  GET_USER_TASKS: `${API_BASE_URL}/auth/task`,//
+  GET_USER_EVENTS: `${API_BASE_URL}/auth/event`,
+  GET_USER_TASKS: `${API_BASE_URL}/auth/task`,
 
   // //Update event/task
   // UPDATE_USER_EVENTS: `${API_BASE_URL}/event/addAllEvents`,
   // UPDATE_USER_TASKS: `${API_BASE_URL}/task/addAllTasks`,
 
   //Update event/task
-  UPDATE_USER_EVENTS: `${API_BASE_URL}/auth/save-event`,//
-  UPDATE_USER_TASKS: `${API_BASE_URL}/auth/save-task`,//
+  UPDATE_USER_EVENTS: `${API_BASE_URL}/auth/save-event`,
+  UPDATE_USER_TASKS: `${API_BASE_URL}/auth/save-task`,
   
   // delete event/task 
   DELETE_EVENT: (eventId) => `${API_BASE_URL}/event/${eventId}/trash`,

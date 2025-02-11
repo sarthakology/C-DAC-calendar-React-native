@@ -2,6 +2,9 @@ import React, {useState, useEffect, useReducer} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import GlobalContext from './GlobalContext';
 import dayjs from 'dayjs';
+import { DevSettings } from 'react-native'
+import saveEvent from '../services/SaveEvent';
+import saveTask from '../services/SaveTask'; // Import a saveTask service if needed
 
 // Reducer
 function savedEventsReducer(state, {type, payload}) {
@@ -84,6 +87,8 @@ export default function ContextWrapper(props) {
   
     dispatchCalEvent({ type: 'deleteAll' });
     dispatchCalTask({ type: 'deleteAll' });
+
+    DevSettings.reload(); // 🔄 Reloads the entire app
   
   };
 
@@ -109,6 +114,7 @@ export default function ContextWrapper(props) {
     const saveEvents = async () => {
       try {
         await AsyncStorage.setItem('savedEvents', JSON.stringify(savedEvents));
+        await saveEvent(savedEvents);
       } catch (error) {
         console.error('Failed to save events to storage', error);
       }
@@ -120,6 +126,7 @@ export default function ContextWrapper(props) {
     const saveTasks = async () => {
       try {
         await AsyncStorage.setItem('savedTasks', JSON.stringify(savedTasks));
+        await saveTask(savedTasks);
       } catch (error) {
         console.error('Failed to save tasks to storage', error);
       }

@@ -10,14 +10,18 @@ import SearchScreen from '../screens/BottomTabScreens/SearchScreen';
 import ListScreen from '../screens/BottomTabScreens/ListScreen';
 import SettingsScreen from '../screens/BottomTabScreens/SettingsScreen';
 import ProfileNavigator from '../navigators/ProfileNavigator';
-import userData from '../userDataBackend/userData';
+
 
 const Tab = createBottomTabNavigator();
 
 export default function BottomTabs() {
-  const { profilePicture } = userData;
-  const navigation = useNavigation(); // Access navigation object
+  const navigation = useNavigation();
   const [isLoggedIn, setIsLoggedIn] = useState(null);
+   
+
+
+
+
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -52,24 +56,13 @@ export default function BottomTabs() {
             iconName = focused ? 'list' : 'list-outline';
           } else if (route.name === 'Profile') {
             return (
-              <TouchableOpacity
-                onPress={async () => {
-                  const token = await AsyncStorage.getItem('accessToken');
-                  if (!token) {
-                    navigation.navigate('Login'); // Redirect to Login if no token
-                  } else {
-                    navigation.navigate('Profile'); // Navigate to Profile if token exists
-                  }
-                }}
-              >
-                <Image
-                  source={{ uri: profilePicture }}
-                  style={[
-                    styles.profileIcon,
-                    { borderColor: focused ? 'black' : 'gray' },
-                  ]}
-                />
-              </TouchableOpacity>
+              <Image
+                source={{ uri: "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg" }}
+                style={[
+                  styles.profileIcon,
+                  { borderColor: focused ? 'black' : 'gray' },
+                ]}
+              />
             );
           }
 
@@ -82,10 +75,29 @@ export default function BottomTabs() {
     >
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Search" component={SearchScreen} />
-      <Tab.Screen name="Profile" component={ProfileNavigator} />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileNavigator}
+        options={{
+          tabBarButton: (props) => (
+            <TouchableOpacity
+              {...props}
+              onPress={async () => {
+                const token = await AsyncStorage.getItem('accessToken');
+                if (!token) {
+                  navigation.navigate('Login');
+                } else {
+                  props.onPress();
+                }
+              }}
+            />
+          ),
+        }}
+      />
       <Tab.Screen name="List" component={ListScreen} />
       <Tab.Screen name="Setting" component={SettingsScreen} />
     </Tab.Navigator>
+
   );
 }
 

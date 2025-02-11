@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -10,30 +10,64 @@ import {
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import userData from '../../../userDataBackend/userData';
+import axios from 'axios';
+import useProfile from '../../../userDataBackend/ProfileData';
+import API_URLS from '../../../ApiUrls';
+import refreshJWTToken from '../../../services/RefreshJWTToken';
 
 export default function EditProfileScreen({ navigation }) {
-  const [name, setName] = useState(userData.name);
-  const [gender, setGender] = useState(userData.gender);
-  const [phno, setPhno] = useState(userData.phno);
-  const [modalVisible, setModalVisible] = useState(false);
-  
-  const role = userData.role;
-  const email = userData.email;
-  const profilePicture = userData.profilePicture;
+  const profileData = useProfile();
 
-  const handleSave = () => {
-    const updatedData = {
-      name,
-      gender,
-      role,
-      phno,
-      email,
-      profilePicture,
-    };
-    console.log('Updated Profile Data:', updatedData);
-    Alert.alert('Success', 'Profile updated successfully.');
-    navigation.goBack();
+  const profile = useMemo(() => profileData || {
+    name: "N/A",
+    gender: "N/A",
+    role: "N/A",
+    phno: "N/A",
+    email: "N/A",
+    profilePicture: "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg",
+    accountStatus: "Public"
+  }, [profileData]);
+
+  const [name, setName] = useState(profile.name);
+  const [gender, setGender] = useState(profile.gender);
+  const [phno, setPhno] = useState(profile.phno);
+  const [accountStatus, setAccountStatus] = useState(profile.accountStatus);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  useEffect(() => {
+    setName(profile.name);
+    setGender(profile.gender);
+    setPhno(profile.phno);
+    setAccountStatus(profile.accountStatus);
+  }, [profile]);
+
+  const handleSave = async () => {
+    try {
+      const updatedData = {
+        name,
+        gender,
+        role: profile.role,
+        phno,
+        email: profile.email,
+        profilePicture: profile.profilePicture,
+        accountStatus
+      };
+
+      const accessToken = await refreshJWTToken(navigation);
+
+      await axios.put(API_URLS.UPDATE_USER_PROFILE, updatedData, {
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+      });
+
+      Alert.alert('Success', 'Profile updated successfully.');
+      navigation.goBack();
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      Alert.alert('Error', 'Failed to update profile. Please try again.');
+    }
   };
 
   const handleGenderSelect = (selectedGender) => {
@@ -41,7 +75,6 @@ export default function EditProfileScreen({ navigation }) {
     setModalVisible(false);
   };
 
-  // Navigate to ProfileImageScreen when profile picture is clicked
   const handleProfilePictureClick = () => {
     navigation.navigate('ProfileImage');
   };
@@ -49,9 +82,10 @@ export default function EditProfileScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        {/* Profile Picture - TouchableOpacity for navigation */}
+
+        {/* Profile Picture */}
         <TouchableOpacity onPress={handleProfilePictureClick}>
-          <Image source={{ uri: profilePicture }} style={styles.profilePicture} />
+          <Image source={{ uri: profile.profilePicture }} style={styles.profilePicture} />
         </TouchableOpacity>
 
         <Text style={styles.title}>Edit Profile</Text>
@@ -65,18 +99,15 @@ export default function EditProfileScreen({ navigation }) {
         {/* Gender Selection */}
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Gender</Text>
-          <TouchableOpacity
-            style={styles.dropdown}
-            onPress={() => setModalVisible(true)}
-          >
+          <TouchableOpacity style={styles.dropdown} onPress={() => setModalVisible(true)}>
             <Text style={styles.dropdownText}>{gender}</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Role Display (Non-editable) */}
+        {/* Role (Read-only) */}
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Role</Text>
-          <TextInput style={styles.input} value={role} editable={false} />
+          <TextInput style={styles.input} value={profile.role} editable={false} />
         </View>
 
         {/* Phone Number Input */}
@@ -85,20 +116,15 @@ export default function EditProfileScreen({ navigation }) {
           <TextInput
             style={styles.input}
             value={phno.toString()}
-            onChangeText={(value) => setPhno(Number(value) || 0)}
+            onChangeText={setPhno}
             keyboardType="phone-pad"
           />
         </View>
 
-        {/* Email Display (Non-editable) */}
+        {/* Email (Read-only) */}
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Email</Text>
-          <TextInput
-            style={styles.input}
-            value={email}
-            keyboardType="email-address"
-            editable={false}
-          />
+          <TextInput style={styles.input} value={profile.email} editable={false} />
         </View>
 
         {/* Save Button */}
@@ -106,43 +132,28 @@ export default function EditProfileScreen({ navigation }) {
           <Text style={styles.buttonText}>Save Changes</Text>
         </TouchableOpacity>
 
-        {/* Modal for Gender Selection */}
+        {/* Gender Selection Modal */}
         <Modal
           animationType="slide"
-          transparent={true}
+          transparent
           visible={modalVisible}
           onRequestClose={() => setModalVisible(false)}
         >
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>Select Gender</Text>
-              <TouchableOpacity
-                style={styles.modalOption}
-                onPress={() => handleGenderSelect('Male')}
-              >
-                <Text style={styles.modalText}>Male</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.modalOption}
-                onPress={() => handleGenderSelect('Female')}
-              >
-                <Text style={styles.modalText}>Female</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.modalOption}
-                onPress={() => handleGenderSelect('Other')}
-              >
-                <Text style={styles.modalText}>Other</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.modalOption, styles.cancelButton]}
-                onPress={() => setModalVisible(false)}
-              >
+              {["Male", "Female", "Other"].map((option) => (
+                <TouchableOpacity key={option} style={styles.modalOption} onPress={() => handleGenderSelect(option)}>
+                  <Text style={styles.modalText}>{option}</Text>
+                </TouchableOpacity>
+              ))}
+              <TouchableOpacity style={[styles.modalOption, styles.cancelButton]} onPress={() => setModalVisible(false)}>
                 <Text style={styles.modalText}>Cancel</Text>
               </TouchableOpacity>
             </View>
           </View>
         </Modal>
+
       </View>
     </SafeAreaView>
   );

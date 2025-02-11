@@ -1,76 +1,64 @@
-import React,{ useContext } from 'react';
+import React, { useContext } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
-import userData from '../../../userDataBackend/userData';
 import GlobalContext from "../../../context/GlobalContext";
-
-
+import useProfile from '../../../userDataBackend/ProfileData';
 
 export default function ProfileScreen({ navigation }) {
   const { resetAppData } = useContext(GlobalContext);
-  const { name, gender, role, phno, email, profilePicture } = userData;
+  const profileData = useProfile(); // Directly access profile data
 
-  const handleEditProfile = () => {
-    navigation.navigate('EditProfile');
+  // Default values (in case profileData is null)
+  const profile = {
+    name: profileData?.name || "N/A",
+    gender: profileData?.gender || "N/A",
+    role: profileData?.role || "N/A",
+    phno: profileData?.phno || "N/A",
+    email: profileData?.email || "N/A",
+    profilePicture: profileData?.profilePicture || "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg",
+    accountStatus: profileData?.accountStatus || "Public"
   };
 
+  // Handle profile edit
+  const handleEditProfile = () => navigation.navigate('EditProfile');
+
+  // Handle logout
   const handleLogout = async () => {
     try {
       resetAppData();
       Alert.alert('Logout', 'You have been logged out.');
       navigation.navigate('Login');
     } catch (error) {
-      console.error('Error clearing savedEvents and savedTasks from AsyncStorage:', error);
+      console.error('Logout Error:', error);
     }
   };
-  
-
-  const handleHelp = () => {
-    navigation.navigate('Help');
-  };
-
-  const handleAdmin = () => { 
-    navigation.navigate('Admin');
-  };
-
 
   return (
     <SafeAreaView style={styles.safeArea}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={handleHelp} style={styles.iconButton}>
+        <TouchableOpacity onPress={() => navigation.navigate('Help')} style={styles.iconButton}>
           <Ionicons name="help-circle-outline" size={30} color="#007bff" />
         </TouchableOpacity>
-        {role === 'admin' && (
-          <TouchableOpacity onPress={handleAdmin} style={styles.iconButton}>
+        {profile.role === 'admin' && (
+          <TouchableOpacity onPress={() => navigation.navigate('Admin')} style={styles.iconButton}>
             <Ionicons name="person-circle-outline" size={30} color="#007bff" />
           </TouchableOpacity> 
         )}
       </View>
 
+      {/* Profile Section */}
       <View style={styles.container}>
-        <Image source={{ uri: profilePicture }} style={styles.profilePicture} />
-        <Text style={styles.name}>{name}</Text>
+        <Image source={{ uri: profile.profilePicture }} style={styles.profilePicture} />
+        <Text style={styles.name}>{profile.name}</Text>
 
-        <View style={styles.infoContainer}>
-          <Text style={styles.label}>Gender:</Text>
-          <Text style={styles.value}>{gender}</Text>
-        </View>
-        <View style={styles.infoContainer}>
-          <Text style={styles.label}>Role:</Text>
-          <Text style={styles.value}>{role}</Text>
-        </View>
-        <View style={styles.infoContainer}>
-          <Text style={styles.label}>Phone Number:</Text>
-          <Text style={styles.value}>{phno}</Text>
-        </View>
-        <View style={styles.infoContainer}>
-          <Text style={styles.label}>Email:</Text>
-          <Text style={styles.value}>{email}</Text>
-        </View>
+        <ProfileInfo label="Gender" value={profile.gender} />
+        <ProfileInfo label="Role" value={profile.role} />
+        <ProfileInfo label="Phone Number" value={profile.phno} />
+        <ProfileInfo label="Email" value={profile.email} />
 
+        {/* Action Buttons */}
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={handleEditProfile}>
             <Text style={styles.buttonText}>Edit Profile</Text>
@@ -83,6 +71,14 @@ export default function ProfileScreen({ navigation }) {
     </SafeAreaView>
   );
 }
+
+// ✅ Extracted a reusable ProfileInfo component
+const ProfileInfo = ({ label, value }) => (
+  <View style={styles.infoContainer}>
+    <Text style={styles.label}>{label}:</Text>
+    <Text style={styles.value}>{value}</Text>
+  </View>
+);
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -162,3 +158,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
