@@ -6,8 +6,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage'; // Import 
 import userData from '../../../userDataBackend/userData';
 import GlobalContext from "../../../context/GlobalContext";
 
+
+
 export default function ProfileScreen({ navigation }) {
-  const { dispatchCalEvent, dispatchCalTask } = useContext(GlobalContext);
+  const { resetAppData } = useContext(GlobalContext);
   const { name, gender, role, phno, email, profilePicture } = userData;
 
   const handleEditProfile = () => {
@@ -16,16 +18,7 @@ export default function ProfileScreen({ navigation }) {
 
   const handleLogout = async () => {
     try {
-      // Clear savedEvents and savedTasks from AsyncStorage
-      await AsyncStorage.removeItem('savedEvents');
-      await AsyncStorage.removeItem('savedTasks');
-  
-      console.log('savedEvents and savedTasks cleared from AsyncStorage.');
-  
-      // Clear state
-      dispatchCalEvent({ type: 'deleteAll' });
-      dispatchCalTask({ type: 'deleteAll' });
-  
+      resetAppData();
       Alert.alert('Logout', 'You have been logged out.');
       navigation.navigate('Login');
     } catch (error) {

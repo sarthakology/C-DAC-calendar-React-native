@@ -6,6 +6,21 @@
     "Password": "Password",
     "Login": "Login",
     "Don't have an account?": "Don't have an account?",
-    "Sign up here": "Sign up here"
+    "Sign up here": "Sign up here",
+
+    "Create Account": "Create Account",
+    "Sign up to get started": "Sign up to get started",
+    "Confirm Password": "Confirm Password",
+    "I accept the": "I accept the",
+    "terms and conditions": "terms and conditions",
+    "Register": "Register",
+    "Already have an account?": "Already have an account?",
+    "Log in here": "Log in here",
+    "Passwords do not match.": "Passwords do not match.",
+    "You must accept the terms and conditions.": "You must accept the terms and conditions."
+    
+
+
+
 
 }

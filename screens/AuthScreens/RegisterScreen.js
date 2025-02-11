@@ -9,27 +9,49 @@ import {
   Alert 
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
+import { useTranslation } from 'react-i18next';
+import API_URLS from '../../ApiUrls';
 
 export default function RegisterScreen({ navigation }) {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match.');
+      Alert.alert('Error', t('Passwords do not match.'));
       return;
     }
 
     if (!isTermsAccepted) {
-      Alert.alert('Error', 'You must accept the terms and conditions.');
+      Alert.alert('Error', t('You must accept the terms and conditions.'));
       return;
     }
 
-    // // Add your register logic here
-    // navigation.navigate('Main'); // Navigate to the main screen
-    navigation.goBack();
+    try {
+      const response = await fetch(API_URLS.REGISTER, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Alert.alert('Success', t('Registration successful!'), [
+          { text: 'OK', onPress: () => navigation.goBack() },
+        ]);
+      } else {
+        Alert.alert('Error', data.message || t('Error registering user.'));
+      }
+    } catch (error) {
+      Alert.alert('Error', t('Something went wrong. Please try again.'));
+      console.error('Registration Error:', error);
+    }
   };
 
   return (
@@ -38,10 +60,10 @@ export default function RegisterScreen({ navigation }) {
         source={{ uri: 'https://www.cdac.in/img/cdac-logo.png' }} 
         style={styles.logo} 
       />
-      <Text style={styles.title}>Create Account</Text>
-      <Text style={styles.subtitle}>Sign up to get started</Text>
+      <Text style={styles.title}>{t('Create Account')}</Text>
+      <Text style={styles.subtitle}>{t('Sign up to get started')}</Text>
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Email</Text>
+        <Text style={styles.label}>{t('Email')}</Text>
         <TextInput
           style={styles.input}
           placeholder="name@company.com"
@@ -51,7 +73,7 @@ export default function RegisterScreen({ navigation }) {
         />
       </View>
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Password</Text>
+        <Text style={styles.label}>{t('Password')}</Text>
         <TextInput
           style={styles.input}
           placeholder="••••••••"
@@ -61,7 +83,7 @@ export default function RegisterScreen({ navigation }) {
         />
       </View>
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Confirm Password</Text>
+        <Text style={styles.label}>{t('Confirm Password')}</Text>
         <TextInput
           style={styles.input}
           placeholder="••••••••"
@@ -77,19 +99,19 @@ export default function RegisterScreen({ navigation }) {
           tintColors={{ true: '#007bff', false: '#ccc' }}
         />
         <Text style={styles.checkboxText}>
-          I accept the{' '}
+          {t('I accept the')}{' '}
           <Text style={styles.link} onPress={() => Alert.alert('Terms', 'Show terms and conditions here.')}>
-            terms and conditions
+            {t('terms and conditions')}
           </Text>
         </Text>
       </View>
       <TouchableOpacity style={styles.button} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Register</Text>
+        <Text style={styles.buttonText}>{t('Register')}</Text>
       </TouchableOpacity>
       <Text style={styles.footerText}>
-        Already have an account?{' '}
-        <Text style={styles.link} onPress={() =>     navigation.goBack()}>
-          Log in here
+        {t("Already have an account?")}{' '}
+        <Text style={styles.link} onPress={() => navigation.goBack()}>
+          {t('Log in here')}
         </Text>
       </Text>
     </View>
@@ -183,3 +205,4 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
 });
+

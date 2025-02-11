@@ -1,5 +1,6 @@
 import React from "react";
 
+
 const GlobalContext = React.createContext({
   daySelected: null,
   setDaySelected: () => {},
@@ -21,6 +22,8 @@ const GlobalContext = React.createContext({
   
   selectedTask: null,
   setSelectedTask: () => {},
+
+  resetAppData: () => {},
 });
 
 export default GlobalContext;

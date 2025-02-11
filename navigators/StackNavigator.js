@@ -27,7 +27,7 @@ export default function AppNavigator() {
   const {showEventModal, showTaskModal} = useContext(GlobalContext);
   return (
     <>
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator initialRouteName="main">
         <Stack.Screen
           name="main"
           component={BottomTabs}

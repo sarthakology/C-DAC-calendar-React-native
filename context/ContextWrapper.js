@@ -55,6 +55,7 @@ async function initTasks() {
   }
 }
 
+
 export default function ContextWrapper(props) {
   const [daySelected, setDaySelected] = useState(dayjs());
   const [showEventModal, setShowEventModal] = useState(false);
@@ -72,6 +73,19 @@ export default function ContextWrapper(props) {
     [],
     () => [],
   );
+  
+  const resetAppData = async () => {
+    // this function removes savedEvents, savedTasks, accesToken and refreshToken
+    await AsyncStorage.removeItem('savedEvents');
+    await AsyncStorage.removeItem('savedTasks');
+
+    await AsyncStorage.removeItem('accessToken');
+    await AsyncStorage.removeItem('refreshToken');
+  
+    dispatchCalEvent({ type: 'deleteAll' });
+    dispatchCalTask({ type: 'deleteAll' });
+  
+  };
 
   // Initialize saved tasks and events from AsyncStorage
   useEffect(() => {
@@ -147,6 +161,8 @@ export default function ContextWrapper(props) {
 
         savedEvents,
         savedTasks,
+
+        resetAppData
       }}>
       {props.children}
     </GlobalContext.Provider>
