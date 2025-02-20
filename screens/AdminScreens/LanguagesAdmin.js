@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -9,14 +9,27 @@ import {
   FlatList,
   Alert,
 } from 'react-native';
+import axios from 'axios';
+import API_URLS from '../../ApiUrls';
 
 const LanguagesAdmin = () => {
-  const [languages, setLanguages] = useState([
-    { id: '1', language: 'English' },
-    { id: '2', language: 'Spanish' },
-    { id: '3', language: 'French' },
-  ]);
+  const [languages, setLanguages] = useState([]);
   const [newLanguage, setNewLanguage] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchLanguages = async () => {
+      try {
+        const response = await axios.get(API_URLS.GET_MASTER_LANGUAGE);
+        setLanguages(response.data);
+      } catch (err) {
+        Alert.alert('Error', 'Failed to load languages.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchLanguages();
+  }, []);
 
   const handleLanguageChange = (index, updatedLanguage) => {
     const updatedLanguages = [...languages];
@@ -24,30 +37,48 @@ const LanguagesAdmin = () => {
     setLanguages(updatedLanguages);
   };
 
-  const handleAddLanguage = () => {
+  const handleAddLanguage = async () => {
     if (!newLanguage.trim()) {
       Alert.alert('Error', 'Language cannot be empty!');
       return;
     }
-
-    if (languages.some((lang) => lang.language === newLanguage)) {
-      Alert.alert('Error', 'Language already exists!');
-      return;
+    try {
+      const response = await axios.post(API_URLS.CREATE_MASTER_LANGUAGE, { language: newLanguage });
+      setLanguages([...languages, response.data.language]);
+      setNewLanguage('');
+      Alert.alert('Success', 'Language added successfully!');
+    } catch (err) {
+      Alert.alert('Error', 'Failed to create language.');
     }
-
-    const newId = (languages.length + 1).toString();
-    setLanguages([...languages, { id: newId, language: newLanguage }]);
-    setNewLanguage('');
-    Alert.alert('Success', 'Language added successfully!');
   };
 
-  const handleDeleteLanguage = (id) => {
-    setLanguages(languages.filter((language) => language.id !== id));
-    Alert.alert('Success', 'Language deleted successfully!');
+  const handleDeleteLanguage = async (id) => {
+    try {
+      await axios.delete(API_URLS.DELETE_MASTER_LANGUAGE(id));
+      setLanguages(languages.filter((language) => language.id !== id));
+      Alert.alert('Success', 'Language deleted successfully!');
+    } catch (err) {
+      Alert.alert('Error', 'Failed to delete language.');
+    }
   };
 
-  const handleSubmit = () => {
-    Alert.alert('Success', 'All languages updated successfully!');
+  const handleUpdateLanguage = async (id, updatedLanguage) => {
+    try {
+      await axios.put(API_URLS.UPDATE_MASTER_LANGUAGE(id), { id, language: updatedLanguage });
+    } catch (err) {
+      Alert.alert('Error', 'Failed to update language.');
+    }
+  };
+
+  const handleSubmit = async () => {
+    try {
+      for (const language of languages) {
+        await handleUpdateLanguage(language.id, language.language);
+      }
+      Alert.alert('Success', 'All languages updated successfully!');
+    } catch (err) {
+      Alert.alert('Error', 'Failed to update languages.');
+    }
   };
 
   const renderItem = ({ item, index }) => (
@@ -66,6 +97,13 @@ const LanguagesAdmin = () => {
       </TouchableOpacity>
     </View>
   );
+  if (isLoading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#007bff" />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -73,7 +111,7 @@ const LanguagesAdmin = () => {
         <Text style={styles.header}>Edit Languages</Text>
         <FlatList
           data={languages}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
           contentContainerStyle={styles.listContainer}
         />

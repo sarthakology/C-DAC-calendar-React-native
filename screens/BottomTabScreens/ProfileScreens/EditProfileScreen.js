@@ -8,6 +8,7 @@ import {
   Image,
   Modal,
   Alert,
+  ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import axios from 'axios';
@@ -33,6 +34,7 @@ export default function EditProfileScreen({ navigation }) {
   const [phno, setPhno] = useState(profile.phno);
   const [accountStatus, setAccountStatus] = useState(profile.accountStatus);
   const [modalVisible, setModalVisible] = useState(false);
+  const [statusModalVisible, setStatusModalVisible] = useState(false);
 
   useEffect(() => {
     setName(profile.name);
@@ -62,7 +64,7 @@ export default function EditProfileScreen({ navigation }) {
         },
       });
 
-      Alert.alert('Success', 'Profile updated successfully.');
+      Alert.alert('Success', 'Profile updated successfully. Pull to refresh Profile');
       navigation.goBack();
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -75,86 +77,124 @@ export default function EditProfileScreen({ navigation }) {
     setModalVisible(false);
   };
 
+  const handleStatusSelect = (selectedStatus) => {
+    setAccountStatus(selectedStatus);
+    setStatusModalVisible(false);
+  };
+
   const handleProfilePictureClick = () => {
     navigation.navigate('ProfileImage');
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.container}>
 
-        {/* Profile Picture */}
-        <TouchableOpacity onPress={handleProfilePictureClick}>
-          <Image source={{ uri: profile.profilePicture }} style={styles.profilePicture} />
-        </TouchableOpacity>
-
-        <Text style={styles.title}>Edit Profile</Text>
-
-        {/* Name Input */}
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Name</Text>
-          <TextInput style={styles.input} value={name} onChangeText={setName} />
-        </View>
-
-        {/* Gender Selection */}
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Gender</Text>
-          <TouchableOpacity style={styles.dropdown} onPress={() => setModalVisible(true)}>
-            <Text style={styles.dropdownText}>{gender}</Text>
+          {/* Profile Picture */}
+          <TouchableOpacity onPress={handleProfilePictureClick}>
+            <Image source={{ uri: profile.profilePicture }} style={styles.profilePicture} />
           </TouchableOpacity>
-        </View>
 
-        {/* Role (Read-only) */}
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Role</Text>
-          <TextInput style={styles.input} value={profile.role} editable={false} />
-        </View>
+          <Text style={styles.title}>Edit Profile</Text>
 
-        {/* Phone Number Input */}
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Phone Number</Text>
-          <TextInput
-            style={styles.input}
-            value={phno.toString()}
-            onChangeText={setPhno}
-            keyboardType="phone-pad"
-          />
-        </View>
-
-        {/* Email (Read-only) */}
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Email</Text>
-          <TextInput style={styles.input} value={profile.email} editable={false} />
-        </View>
-
-        {/* Save Button */}
-        <TouchableOpacity style={styles.button} onPress={handleSave}>
-          <Text style={styles.buttonText}>Save Changes</Text>
-        </TouchableOpacity>
-
-        {/* Gender Selection Modal */}
-        <Modal
-          animationType="slide"
-          transparent
-          visible={modalVisible}
-          onRequestClose={() => setModalVisible(false)}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Select Gender</Text>
-              {["Male", "Female", "Other"].map((option) => (
-                <TouchableOpacity key={option} style={styles.modalOption} onPress={() => handleGenderSelect(option)}>
-                  <Text style={styles.modalText}>{option}</Text>
-                </TouchableOpacity>
-              ))}
-              <TouchableOpacity style={[styles.modalOption, styles.cancelButton]} onPress={() => setModalVisible(false)}>
-                <Text style={styles.modalText}>Cancel</Text>
-              </TouchableOpacity>
-            </View>
+          {/* Name Input */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Name</Text>
+            <TextInput style={styles.input} value={name} onChangeText={setName} />
           </View>
-        </Modal>
 
-      </View>
+          {/* Gender Selection */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Gender</Text>
+            <TouchableOpacity style={styles.dropdown} onPress={() => setModalVisible(true)}>
+              <Text style={styles.dropdownText}>{gender}</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Role (Read-only) */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Role</Text>
+            <TextInput style={styles.input} value={profile.role} editable={false} />
+          </View>
+
+          {/* Account Status Selection */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Account Status</Text>
+            <TouchableOpacity style={styles.dropdown} onPress={() => setStatusModalVisible(true)}>
+              <Text style={styles.dropdownText}>{accountStatus}</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Phone Number Input */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Phone Number</Text>
+            <TextInput
+              style={styles.input}
+              value={phno.toString()}
+              onChangeText={setPhno}
+              keyboardType="phone-pad"
+            />
+          </View>
+
+          {/* Email (Read-only) */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Email</Text>
+            <TextInput style={styles.input} value={profile.email} editable={false} />
+          </View>
+
+          {/* Save Button */}
+          <TouchableOpacity style={styles.button} onPress={handleSave}>
+            <Text style={styles.buttonText}>Save Changes</Text>
+          </TouchableOpacity>
+
+        </View>
+      </ScrollView>
+
+      {/* Gender Selection Modal */}
+      <Modal
+        animationType="slide"
+        transparent
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Select Gender</Text>
+            {["Male", "Female", "Other"].map((option) => (
+              <TouchableOpacity key={option} style={styles.modalOption} onPress={() => handleGenderSelect(option)}>
+                <Text style={styles.modalText}>{option}</Text>
+              </TouchableOpacity>
+            ))}
+            <TouchableOpacity style={[styles.modalOption, styles.cancelButton]} onPress={() => setModalVisible(false)}>
+              <Text style={styles.modalText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Account Status Selection Modal */}
+      <Modal
+        animationType="slide"
+        transparent
+        visible={statusModalVisible}
+        onRequestClose={() => setStatusModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Select Account Status</Text>
+            {["Public", "Private"].map((status) => (
+              <TouchableOpacity key={status} style={styles.modalOption} onPress={() => handleStatusSelect(status)}>
+                <Text style={styles.modalText}>{status}</Text>
+              </TouchableOpacity>
+            ))}
+            <TouchableOpacity style={[styles.modalOption, styles.cancelButton]} onPress={() => setStatusModalVisible(false)}>
+              <Text style={styles.modalText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
     </SafeAreaView>
   );
 }

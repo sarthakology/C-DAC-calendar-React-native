@@ -1,22 +1,28 @@
-import React, { useState } from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { SafeAreaView, StyleSheet, View, Text, FlatList, TouchableOpacity, Alert } from 'react-native';
+import axios from 'axios';
+import API_URLS from '../../ApiUrls';
 
 export default function DeleteUsersAdmin() {
-  const [users, setUsers] = useState([
-    { email: 'user1@example.com' },
-    { email: 'user2@example.com' },
-    { email: 'user3@example.com' },
-  ]);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get(API_URLS.GET_ROLE);
+        setUsers(response.data);
+      } catch (error) {
+        Alert.alert('Error', 'Failed to fetch users.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUsers();
+  }, []);
 
   const handleDelete = (email) => {
+    // Confirmation alert before deletion
     Alert.alert(
       'Delete User',
       `Are you sure you want to delete ${email}?`,
@@ -28,9 +34,14 @@ export default function DeleteUsersAdmin() {
         {
           text: 'Delete',
           style: 'destructive',
-          onPress: () => {
-            setUsers(users.filter((user) => user.email !== email));
-            Alert.alert('Success', `${email} has been deleted.`);
+          onPress: async () => {
+            try {
+              await axios.delete(API_URLS.DELETE_USER(email));
+              setUsers(users.filter((user) => user.email !== email)); // Remove deleted user from state
+              Alert.alert('Success', `${email} has been deleted.`);
+            } catch (error) {
+              Alert.alert('Error', `Failed to delete user ${email}`);
+            }
           },
         },
       ]
@@ -48,6 +59,16 @@ export default function DeleteUsersAdmin() {
       </TouchableOpacity>
     </View>
   );
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.container}>
+          <Text style={styles.header}>Loading...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>

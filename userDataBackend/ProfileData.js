@@ -18,6 +18,7 @@ const useProfile = () => {
               'Authorization': `Bearer ${accessToken}`
             },
           });
+          console.log("run")
           setProfile(response.data);
 
         }

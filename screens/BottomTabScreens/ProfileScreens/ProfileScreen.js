@@ -1,29 +1,46 @@
-import React, { useContext } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import React, { useContext, useState, useEffect, useCallback } from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Alert, RefreshControl, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import GlobalContext from "../../../context/GlobalContext";
-import useProfile from '../../../userDataBackend/ProfileData';
+import axios from 'axios';
+import refreshJWTToken from '../../../services/RefreshJWTToken';
+import API_URLS from '../../../ApiUrls';
 
 export default function ProfileScreen({ navigation }) {
   const { resetAppData } = useContext(GlobalContext);
-  const profileData = useProfile(); // Directly access profile data
+  const [profile, setProfile] = useState({});
+  const [refreshing, setRefreshing] = useState(false);
 
-  // Default values (in case profileData is null)
-  const profile = {
-    name: profileData?.name || "N/A",
-    gender: profileData?.gender || "N/A",
-    role: profileData?.role || "N/A",
-    phno: profileData?.phno || "N/A",
-    email: profileData?.email || "N/A",
-    profilePicture: profileData?.profilePicture || "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg",
-    accountStatus: profileData?.accountStatus || "Public"
+  const fetchUserProfile = async () => {
+    try {
+      const accessToken = await refreshJWTToken();
+      if (accessToken) {
+        const response = await axios.get(API_URLS.GET_USER_PROFILE, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+          },
+        });
+        setProfile(response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
   };
 
-  // Handle profile edit
+  useEffect(() => {
+    fetchUserProfile();
+  }, []);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchUserProfile();
+    setRefreshing(false);
+  }, []);
+
   const handleEditProfile = () => navigation.navigate('EditProfile');
 
-  // Handle logout
   const handleLogout = async () => {
     try {
       resetAppData();
@@ -36,43 +53,45 @@ export default function ProfileScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('Help')} style={styles.iconButton}>
-          <Ionicons name="help-circle-outline" size={30} color="#007bff" />
-        </TouchableOpacity>
-        {profile.role === 'admin' && (
-          <TouchableOpacity onPress={() => navigation.navigate('Admin')} style={styles.iconButton}>
-            <Ionicons name="person-circle-outline" size={30} color="#007bff" />
-          </TouchableOpacity> 
-        )}
-      </View>
-
-      {/* Profile Section */}
-      <View style={styles.container}>
-        <Image source={{ uri: profile.profilePicture }} style={styles.profilePicture} />
-        <Text style={styles.name}>{profile.name}</Text>
-
-        <ProfileInfo label="Gender" value={profile.gender} />
-        <ProfileInfo label="Role" value={profile.role} />
-        <ProfileInfo label="Phone Number" value={profile.phno} />
-        <ProfileInfo label="Email" value={profile.email} />
-
-        {/* Action Buttons */}
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={handleEditProfile}>
-            <Text style={styles.buttonText}>Edit Profile</Text>
+      <ScrollView 
+        contentContainerStyle={{ flexGrow: 1 }}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      >
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.navigate('Help')} style={styles.iconButton}>
+            <Ionicons name="help-circle-outline" size={30} color="#007bff" />
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.button, styles.logoutButton]} onPress={handleLogout}>
-            <Text style={styles.buttonText}>Logout</Text>
-          </TouchableOpacity>
+          {profile.role === 'admin' && (
+            <TouchableOpacity onPress={() => navigation.navigate('Admin')} style={styles.iconButton}>
+              <Ionicons name="person-circle-outline" size={30} color="#007bff" />
+            </TouchableOpacity> 
+          )}
         </View>
-      </View>
+
+        <View style={styles.container}>
+          <Image source={{ uri: profile.profilePicture || "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg" }} style={styles.profilePicture} />
+          <Text style={styles.name}>{profile.name || "N/A"}</Text>
+
+          <ProfileInfo label="Gender" value={profile.gender || "N/A"} />
+          <ProfileInfo label="Role" value={profile.role || "N/A"} />
+          <ProfileInfo label="Phone Number" value={profile.phno || "N/A"} />
+          <ProfileInfo label="Email" value={profile.email || "N/A"} />
+          <ProfileInfo label="Status" value={profile.accountStatus || "N/A"} />
+
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.button} onPress={handleEditProfile}>
+              <Text style={styles.buttonText}>Edit Profile</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.button, styles.logoutButton]} onPress={handleLogout}>
+              <Text style={styles.buttonText}>Logout</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
-// ✅ Extracted a reusable ProfileInfo component
 const ProfileInfo = ({ label, value }) => (
   <View style={styles.infoContainer}>
     <Text style={styles.label}>{label}:</Text>
@@ -158,4 +177,3 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -7,59 +7,88 @@ import {
   TouchableOpacity,
   FlatList,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import axios from 'axios';
+import API_URLS from '../../ApiUrls';
 
 export default function CountriesAdminScreen() {
-  const [countries, setCountries] = useState([
-    { id: '1', name: 'India' },
-    { id: '2', name: 'USA' },
-    { id: '3', name: 'Canada' },
-  ]);
+  const [countries, setCountries] = useState([]);
   const [newCountry, setNewCountry] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const response = await axios.get(API_URLS.GET_MASTER_COUNTRIES);
+        setCountries(response.data);
+      } catch (err) {
+        Alert.alert('Error', 'Failed to load countries.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchCountries();
+  }, []);
 
   const handleCountryChange = (index, updatedName) => {
     const updatedCountries = [...countries];
-    updatedCountries[index].name = updatedName;
+    updatedCountries[index].country = updatedName;
     setCountries(updatedCountries);
   };
 
-  const handleAddCountry = () => {
+  const handleAddCountry = async () => {
     if (newCountry.trim()) {
-      const newId = (countries.length + 1).toString();
-      setCountries([...countries, { id: newId, name: newCountry }]);
-      setNewCountry('');
-      Alert.alert('Success', 'Country added successfully!');
+      try {
+        const response = await axios.post(API_URLS.CREATE_MASTER_COUNTRIES, { country: newCountry });
+        setCountries([...countries, response.data.country]);
+        setNewCountry('');
+        Alert.alert('Success', 'Country added successfully!');
+      } catch (err) {
+        Alert.alert('Error', 'Failed to create country.');
+      }
     } else {
       Alert.alert('Error', 'Country name cannot be empty!');
     }
   };
 
-  const handleDeleteCountry = (id) => {
-    setCountries(countries.filter((country) => country.id !== id));
-    Alert.alert('Success', 'Country deleted successfully!');
+  const handleDeleteCountry = async (id) => {
+    try {
+      await axios.delete(API_URLS.DELETE_MASTER_COUNTRIES(id));
+      setCountries(countries.filter((country) => country.id !== id));
+      Alert.alert('Success', 'Country deleted successfully!');
+    } catch (err) {
+      Alert.alert('Error', 'Failed to delete country.');
+    }
   };
 
-  const handleSubmit = () => {
-    Alert.alert('Success', 'Countries updated successfully!');
+  const handleUpdateCountry = async (id, updatedCountry) => {
+    try {
+      await axios.put(API_URLS.UPDATE_MASTER_COUNTRIES(id), { id, country: updatedCountry });
+    } catch (err) {
+      Alert.alert('Error', 'Failed to update country.');
+    }
   };
 
-  const renderItem = ({ item, index }) => (
-    <View style={styles.itemContainer}>
-      <Text style={styles.idText}>{item.id}:</Text>
-      <TextInput
-        style={styles.input}
-        value={item.name}
-        onChangeText={(text) => handleCountryChange(index, text)}
-      />
-      <TouchableOpacity
-        style={styles.deleteButton}
-        onPress={() => handleDeleteCountry(item.id)}
-      >
-        <Text style={styles.deleteButtonText}>Delete</Text>
-      </TouchableOpacity>
-    </View>
-  );
+  const handleSubmit = async () => {
+    try {
+      for (const country of countries) {
+        await handleUpdateCountry(country.id, country.country);
+      }
+      Alert.alert('Success', 'Countries updated successfully!');
+    } catch (err) {
+      Alert.alert('Error', 'Failed to update countries.');
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#007bff" />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -67,8 +96,23 @@ export default function CountriesAdminScreen() {
         <Text style={styles.header}>Manage Countries</Text>
         <FlatList
           data={countries}
-          keyExtractor={(item) => item.id}
-          renderItem={renderItem}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item, index }) => (
+            <View style={styles.itemContainer}>
+              <Text style={styles.idText}>{item.id}:</Text>
+              <TextInput
+                style={styles.input}
+                value={item.country}
+                onChangeText={(text) => handleCountryChange(index, text)}
+              />
+              <TouchableOpacity
+                style={styles.deleteButton}
+                onPress={() => handleDeleteCountry(item.id)}
+              >
+                <Text style={styles.deleteButtonText}>Delete</Text>
+              </TouchableOpacity>
+            </View>
+          )}
           contentContainerStyle={styles.listContainer}
         />
         <View style={styles.newCountryContainer}>
@@ -78,10 +122,7 @@ export default function CountriesAdminScreen() {
             onChangeText={setNewCountry}
             placeholder="Add a new country"
           />
-          <TouchableOpacity
-            style={styles.addButton}
-            onPress={handleAddCountry}
-          >
+          <TouchableOpacity style={styles.addButton} onPress={handleAddCountry}>
             <Text style={styles.addButtonText}>Add Country</Text>
           </TouchableOpacity>
         </View>
@@ -164,5 +205,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
