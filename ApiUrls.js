@@ -58,7 +58,7 @@ const API_URLS = {
   UPDATE_MASTER_DATEFORMAT: (Id) => `${API_BASE_URL}/masters/date-format/update/${Id}`,
 
   //CRUD on masters of language
-  GET_MASTER_LANGUAGE: `${API_BASE_URL}/masters/language`,//
+  GET_MASTER_LANGUAGE: `${API_BASE_URL}/masters/language`,
   CREATE_MASTER_LANGUAGE: `${API_BASE_URL}/masters/language/create`,
   DELETE_MASTER_LANGUAGE: (Id) => `${API_BASE_URL}/masters/language/delete/${Id}`,
   UPDATE_MASTER_LANGUAGE: (Id) => `${API_BASE_URL}/masters/language/update/${Id}`,

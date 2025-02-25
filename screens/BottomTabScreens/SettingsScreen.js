@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -10,39 +10,27 @@ import {
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import useLanguages from '../../mastersApi/Languages';
+import useCountries from '../../mastersApi/Countries';
+import useDateFormats from '../../mastersApi/DateFormats';
+import useTimezones from '../../mastersApi/TimeZones';
 
-const SettingsScreen = ({navigation}) => {
-  // Demo data
-  const languageOptions = [
-    {label: 'English', value: 'English'},
-    {label: 'Spanish', value: 'Spanish'},
-    {label: 'French', value: 'French'},
-  ];  
+const SettingsScreen = ({ navigation }) => {
+  const rawLanguageOptions = useLanguages();
+  const rawCountryOptions = useCountries();
+  const rawDateFormatOptions = useDateFormats();
+  const rawTimezoneOptions = useTimezones();
 
-  const countryOptions = [
-    {label: 'USA', value: 'USA'},
-    {label: 'Canada', value: 'Canada'},
-    {label: 'India', value: 'India'},
-  ];
-
-  const dateFormatOptions = [
-    {label: 'MM/DD/YYYY', value: 'MM/DD/YYYY'},
-    {label: 'DD/MM/YYYY', value: 'DD/MM/YYYY'},
-    {label: 'YYYY/MM/DD', value: 'YYYY/MM/DD'},
-  ];
-
-  const timezoneOptions = [
-    {label: 'GMT', value: 'GMT'},
-    {label: 'UTC', value: 'UTC'},
-    {label: 'IST', value: 'IST'},
-  ];
+  const languageOptions = rawLanguageOptions.map(({ language }) => ({ label: language, value: language }));
+  const countryOptions = rawCountryOptions.map(({ country }) => ({ label: country, value: country }));
+  const dateFormatOptions = rawDateFormatOptions.map(({ format }) => ({ label: format, value: format }));
+  const timezoneOptions = rawTimezoneOptions.map(({ timezone }) => ({ label: timezone, value: timezone }));
 
   const timeFormatOptions = [
-    {label: '1:00pm', value: '1:00pm'},
-    {label: '13:00', value: '13:00'},
+    { label: '1:00pm', value: '1:00pm' },
+    { label: '13:00', value: '13:00' },
   ];
 
-  // State management for dropdowns
   const [language, setLanguage] = useState('English');
   const [country, setCountry] = useState('USA');
   const [dateFormat, setDateFormat] = useState('MM/DD/YYYY');
@@ -54,8 +42,7 @@ const SettingsScreen = ({navigation}) => {
   const [openDateFormat, setOpenDateFormat] = useState(false);
   const [openPrimaryTZ, setOpenPrimaryTZ] = useState(false);
   const [openTimeFormat, setOpenTimeFormat] = useState(false);
-
-  // Load settings from AsyncStorage
+ 
   useEffect(() => {
     const loadSettings = async () => {
       try {
@@ -76,7 +63,6 @@ const SettingsScreen = ({navigation}) => {
     loadSettings();
   }, []);
 
-  // Save settings to AsyncStorage
   const handleSubmit = async () => {
     const settings = {
       language,
@@ -89,7 +75,6 @@ const SettingsScreen = ({navigation}) => {
     try {
       await AsyncStorage.setItem('userSettings', JSON.stringify(settings));
       console.log('Settings saved:', settings);
-
       navigation.goBack();
     } catch (error) {
       console.error('Error saving settings:', error);
@@ -104,8 +89,7 @@ const SettingsScreen = ({navigation}) => {
         <View>
           <Text style={styles.header}>Language and Region</Text>
 
-          {/* Language Selection */}
-          <View style={[styles.dropdownWrapper, {zIndex: 6}]}>
+          <View style={[styles.dropdownWrapper, { zIndex: 6 }]}>
             <Text style={styles.label}>Language</Text>
             <DropDownPicker
               open={openLanguage}
@@ -118,8 +102,7 @@ const SettingsScreen = ({navigation}) => {
             />
           </View>
 
-          {/* Country Selection */}
-          <View style={[styles.dropdownWrapper, {zIndex: 5}]}>
+          <View style={[styles.dropdownWrapper, { zIndex: 5 }]}>
             <Text style={styles.label}>Country</Text>
             <DropDownPicker
               open={openCountry}
@@ -132,8 +115,7 @@ const SettingsScreen = ({navigation}) => {
             />
           </View>
 
-          {/* Date Format Selection */}
-          <View style={[styles.dropdownWrapper, {zIndex: 4}]}>
+          <View style={[styles.dropdownWrapper, { zIndex: 4 }]}>
             <Text style={styles.label}>Date Format</Text>
             <DropDownPicker
               open={openDateFormat}
@@ -146,8 +128,7 @@ const SettingsScreen = ({navigation}) => {
             />
           </View>
 
-          {/* Time Format Selection */}
-          <View style={[styles.dropdownWrapper, {zIndex: 3}]}>
+          <View style={[styles.dropdownWrapper, { zIndex: 3 }]}>
             <Text style={styles.label}>Time Format</Text>
             <DropDownPicker
               open={openTimeFormat}
@@ -160,8 +141,7 @@ const SettingsScreen = ({navigation}) => {
             />
           </View>
 
-          {/* Primary Time Zone Selection */}
-          <View style={[styles.dropdownWrapper, {zIndex: 2}]}>
+          <View style={[styles.dropdownWrapper, { zIndex: 2 }]}>
             <Text style={styles.label}>Primary Time Zone</Text>
             <DropDownPicker
               open={openPrimaryTZ}
@@ -174,7 +154,6 @@ const SettingsScreen = ({navigation}) => {
             />
           </View>
 
-          {/* Save Changes Button */}
           <TouchableOpacity style={styles.button} onPress={handleSubmit}>
             <Text style={styles.buttonText}>Save Changes</Text>
           </TouchableOpacity>
@@ -185,51 +164,15 @@ const SettingsScreen = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#f4f4f4',
-  },
-  container: {
-    flex: 1,
-    padding: 20,
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 8,
-    marginTop: 15,
-  },
-  dropdownWrapper: {
-    marginBottom: 15,
-  },
-  dropdown: {
-    backgroundColor: '#fff',
-    borderWidth: 0.5,
-    borderColor: '#ccc',
-    borderRadius: 5,
-  },
-  dropdownContainer: {
-    backgroundColor: '#fff',
-    borderWidth: 0.5,
-    borderColor: '#ccc',
-  },
-  button: {
-    backgroundColor: '#ffffff',
-    paddingVertical: 12,
-    borderWidth: 0.5,
-    borderColor: 'black',
-    borderRadius: 5,
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  buttonText: {
-    color: '#000000',
-    fontSize: 16,
-  },
+  safeArea: { flex: 1, backgroundColor: '#f4f4f4' },
+  container: { flex: 1, padding: 20 },
+  header: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
+  label: { fontSize: 16, marginBottom: 8, marginTop: 15 },
+  dropdownWrapper: { marginBottom: 15 },
+  dropdown: { backgroundColor: '#fff', borderWidth: 0.5, borderColor: '#ccc', borderRadius: 5 },
+  dropdownContainer: { backgroundColor: '#fff', borderWidth: 0.5, borderColor: '#ccc' },
+  button: { backgroundColor: '#ffffff', paddingVertical: 12, borderWidth: 0.5, borderColor: 'black', borderRadius: 5, alignItems: 'center', marginTop: 20 },
+  buttonText: { color: '#000000', fontSize: 16 },
 });
 
 export default SettingsScreen;
