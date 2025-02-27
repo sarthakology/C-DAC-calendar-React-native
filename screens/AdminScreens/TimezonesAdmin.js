@@ -12,12 +12,14 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import API_URLS from '../../ApiUrls';
+import { useTranslation } from 'react-i18next';
 
 const TimezonesAdmin = () => {
   const [timezones, setTimezones] = useState([]);
   const [newTimezone, setNewTimezone] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchTimezones = async () => {
@@ -25,7 +27,7 @@ const TimezonesAdmin = () => {
         const response = await axios.get(API_URLS.GET_MASTER_TIMEZONE);
         setTimezones(response.data);
       } catch (err) {
-        Alert.alert('Error', 'Failed to load timezones.');
+        Alert.alert(t('error'), t('failed To Load Timezones'));
       } finally {
         setIsLoading(false);
       }
@@ -41,12 +43,12 @@ const TimezonesAdmin = () => {
 
   const handleAddTimezone = async () => {
     if (!newTimezone.trim()) {
-      Alert.alert('Error', 'Timezone cannot be empty!');
+      Alert.alert(t('error'), t('timezone Cannot Be Empty'));
       return;
     }
 
     if (timezones.some((tz) => tz.timezone === newTimezone)) {
-      Alert.alert('Error', 'Timezone already exists!');
+      Alert.alert(t('error'), t('timezone Already Exists'));
       return;
     }
 
@@ -55,9 +57,9 @@ const TimezonesAdmin = () => {
       const response = await axios.post(API_URLS.CREATE_MASTER_TIMEZONE, { timezone: newTimezone });
       setTimezones([...timezones, response.data.timezone]);
       setNewTimezone('');
-      Alert.alert('Success', 'Timezone added successfully!');
+      Alert.alert(t('success'), t('timezone Added Successfully'));
     } catch (err) {
-      Alert.alert('Error', 'Failed to create timezone.');
+      Alert.alert(t('error'), t('failed To Create Timezone'));
     } finally {
       setActionLoading(false);
     }
@@ -68,9 +70,9 @@ const TimezonesAdmin = () => {
       setActionLoading(true);
       await axios.delete(API_URLS.DELETE_MASTER_TIMEZONE(id));
       setTimezones(timezones.filter((timezone) => timezone.id !== id));
-      Alert.alert('Success', 'Timezone deleted successfully!');
+      Alert.alert(t('success'), t('timezone Deleted Successfully'));
     } catch (err) {
-      Alert.alert('Error', 'Failed to delete timezone.');
+      Alert.alert(t('error'), t('failed To Delete Timezone'));
     } finally {
       setActionLoading(false);
     }
@@ -81,9 +83,9 @@ const TimezonesAdmin = () => {
       for (const timezone of timezones) {
         await axios.put(API_URLS.UPDATE_MASTER_TIMEZONE(timezone.id), { id: timezone.id, timezone: timezone.timezone });
       }
-      Alert.alert('Success', 'All timezones updated successfully!');
+      Alert.alert(t('success'), t('all Timezones Updated Successfully'));
     } catch (err) {
-      Alert.alert('Error', 'Failed to update timezones.');
+      Alert.alert(t('error'), t('failed To Update Timezones'));
     }
   };
 
@@ -100,7 +102,7 @@ const TimezonesAdmin = () => {
         onPress={() => handleDeleteTimezone(item.id)}
         disabled={actionLoading}
       >
-        <Text style={styles.deleteButtonText}>Delete</Text>
+        <Text style={styles.deleteButtonText}>{t('delete')}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -116,7 +118,7 @@ const TimezonesAdmin = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <Text style={styles.header}>Edit Timezones</Text>
+        <Text style={styles.header}>{t('edit Timezones')}</Text>
         <FlatList
           data={timezones}
           keyExtractor={(item) => item.id.toString()}
@@ -128,14 +130,14 @@ const TimezonesAdmin = () => {
             style={styles.input}
             value={newTimezone}
             onChangeText={setNewTimezone}
-            placeholder="Enter new timezone"
+            placeholder={t('enter New Timezone')}
           />
           <TouchableOpacity
             style={styles.addButton}
             onPress={handleAddTimezone}
             disabled={actionLoading}
           >
-            <Text style={styles.addButtonText}>Add Timezone</Text>
+            <Text style={styles.addButtonText}>{t('add Timezone')}</Text>
           </TouchableOpacity>
         </View>
         <TouchableOpacity
@@ -143,7 +145,7 @@ const TimezonesAdmin = () => {
           onPress={handleSubmit}
           disabled={actionLoading}
         >
-          <Text style={styles.saveButtonText}>Save Changes</Text>
+          <Text style={styles.saveButtonText}>{t('save Changes')}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

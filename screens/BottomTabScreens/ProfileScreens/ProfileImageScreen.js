@@ -6,11 +6,14 @@ import axios from 'axios';
 import { uploadFileToFirebase } from "../../../firebase/FirebaseUpload";
 import refreshJWTToken from '../../../services/RefreshJWTToken';
 import API_URLS from '../../../ApiUrls';
+import { useTranslation } from 'react-i18next'; // Import translation hook
+
 
 export default function ProfileImageScreen({ navigation }) {
   const [selectedImage, setSelectedImage] = useState(null);
   const [profile, setProfile] = useState({});
   const [showSaveButton, setShowSaveButton] = useState(false);
+  const { t } = useTranslation(); // Initialize the translation hook
 
   useEffect(() => {
     fetchUserProfile();
@@ -41,9 +44,9 @@ export default function ProfileImageScreen({ navigation }) {
 
     launchImageLibrary(options, async (response) => {
       if (response.didCancel) {
-        Alert.alert('Image Picker', 'User cancelled image picker');
+        Alert.alert(t('imagePickerTitle'), t('imagePickerCancelMessage'));
       } else if (response.errorCode) {
-        Alert.alert('Image Picker Error', response.errorMessage || 'Something went wrong');
+        Alert.alert(t('imagePickerErrorTitle'), response.errorMessage || t('somethingWentWrong'));
       } else if (response.assets && response.assets.length > 0) {
         const selectedUri = response.assets[0].uri;
         setSelectedImage(selectedUri);
@@ -74,17 +77,6 @@ export default function ProfileImageScreen({ navigation }) {
           email: profile.email,  // Required by backend
           profilePicture: url,   // Updating only profilePicture
         };
-
-
-        //   const updatedData = {
-        //     name,
-        //     gender,
-        //     role: profile.role,
-        //     phno,
-        //     email: profile.email,
-        //     profilePicture: profile.profilePicture,
-        //     accountStatus
-        //   };
   
         const accessToken = await refreshJWTToken(navigation);
   
@@ -95,14 +87,14 @@ export default function ProfileImageScreen({ navigation }) {
           },
         });
   
-        Alert.alert('Success', 'Profile image updated successfully.');
+        Alert.alert(t('successTitle'), t('profileImageUpdatedSuccess'));
         setShowSaveButton(false);
         setProfile({ ...profile, profilePicture: url });
         navigation.navigate('UserProfile');
       });
     } catch (error) {
       console.error('Error updating profile:', error);
-      Alert.alert('Error', 'Failed to update profile. Please try again.');
+      Alert.alert(t('errorTitle'), t('failedToUpdateProfile'));
     }
   };
   
@@ -115,13 +107,13 @@ export default function ProfileImageScreen({ navigation }) {
           style={styles.profileImage}
         />
         <TouchableOpacity style={styles.editButton} onPress={handleEditPress}>
-          <Text style={styles.editButtonText}>Edit</Text>
+          <Text style={styles.editButtonText}>{t('editButton')}</Text>
         </TouchableOpacity>
 
         {/* Show Save Image Button when an image is selected */}
         {showSaveButton && (
           <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-            <Text style={styles.saveButtonText}>Save Image</Text>
+            <Text style={styles.saveButtonText}>{t('saveButton')}</Text>
           </TouchableOpacity>
         )}
       </ScrollView>
@@ -173,4 +165,3 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-

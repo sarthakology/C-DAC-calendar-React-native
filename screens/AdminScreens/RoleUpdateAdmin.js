@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Button, Alert, ActivityIndicator, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 import axios from 'axios';
 import API_URLS from '../../ApiUrls';
+import { useTranslation } from 'react-i18next';
 
 export default function RoleUpdateAdmin() {
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -14,7 +16,7 @@ export default function RoleUpdateAdmin() {
         setUsers(response.data);
       } catch (error) {
         console.error('Error fetching users:', error);
-        Alert.alert('Error', 'Failed to fetch users.');
+        Alert.alert(t('error'), t('failed To Fetch Users'));
       } finally {
         setIsLoading(false);
       }
@@ -32,10 +34,10 @@ export default function RoleUpdateAdmin() {
       setUsers(users.map((user) =>
         user.email === email ? { ...user, role: newRole } : user
       ));
-      Alert.alert('Success', `Role updated for ${email}`);
+      Alert.alert(t('success'), `${t('role Updated For')} ${email}`);
     } catch (error) {
       console.error('Error updating role:', error);
-      Alert.alert('Error', 'Failed to update role.');
+      Alert.alert(t('error'), t('failed To Update Role'));
     }
   };
 
@@ -51,18 +53,18 @@ export default function RoleUpdateAdmin() {
     <SafeAreaView style={{ flex: 1, padding: 16 }}>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <Text style={{ fontSize: 24, fontWeight: 'bold', textAlign: 'center', marginBottom: 20 }}>
-          Manage User Roles
+          {t('manage User Roles')}
         </Text>
         
         {/* Users List */}
         {users.map((user) => (
           <View key={user.email} style={styles.userContainer}>
             <View>
-              <Text>Email: {user.email}</Text>
-              <Text>Current Role: {user.role}</Text>
+              <Text>{`${t('email')}: ${user.email}`}</Text>
+              <Text>{`${t('current Role')}: ${user.role}`}</Text>
             </View>
             <Button 
-              title={user.role === 'admin' ? 'Demote' : 'Promote'}
+              title={user.role === 'admin' ? t('demote') : t('promote')}
               onPress={() => handleRoleChange(user.email, user.role)}
               style={styles.button}
             />

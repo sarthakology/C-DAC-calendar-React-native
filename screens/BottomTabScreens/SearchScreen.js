@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useMemo } from 'react';
 import {
   StyleSheet,
   Text,
@@ -6,109 +6,83 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
-  ScrollView,
-  FlatList,
   SafeAreaView,
+  ScrollView,
 } from 'react-native';
+import searchUserByEmail from '../../services/SearchUser';
+import GlobalContext from "../../context/GlobalContext"; 
+import useProfile from '../../userDataBackend/ProfileData';
+import { useTranslation } from 'react-i18next'; // Import translation hook
 
 export default function SearchScreen() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearching, setIsSearching] = useState(false);
-
-  // Demo data for search result
-  const data = {
-    credentials: {
-      profilePicture:
-        'https://firebasestorage.googleapis.com/v0/b/fir-44d31.appspot.com/o/images%2Fsample1.jpgca9a9b72-3770-49e6-8281-7ae5e6f657d3?alt=media&token=2f514c54-2925-46bd-8721-9f47051657e3',
-      name: 'Antony',
-      email: 'a@a.a',
-      role: 'User',
-    },
-    savedEvents: [
-      {
-        title: 'meeting',
-        description: 'meeting with client',
-        label: 'green',
-        day: 1736188200000,
-        id: 1736162142644,
-        guests: [],
-      },
-      {
-        title: 'dinner',
-        description: 'dinner with jack',
-        label: 'purple',
-        day: 1736793000000,
-        id: 1736162161460,
-        guests: [],
-      },
-      {
-        title: 'trip',
-        description: 'trip to dubai',
-        label: 'gray',
-        day: 1736274600000,
-        id: 1736162179727,
-        guests: [],
-      },
-    ],
-    savedTasks: [
-      {
-        id: 1736162215694,
-        title: 'gym',
-        date: '2025-01-07',
-        startTime: '15:00',
-        endTime: '16:00',
-        duration: 'timed',
-        description: 'gym gym gym',
-        reminder: '15:00',
-        completed: false,
-      },
-      {
-        id: 1736162237027,
-        title: 'party',
-        date: '2025-01-06',
-        startTime: '22:00',
-        endTime: '23:00',
-        duration: 'timed',
-        description: 'party party',
-        reminder: 'No',
-        completed: false,
-      },
-    ],
-  };
+  const [data, setData] = useState(null);
 
   const [checkedEvents, setCheckedEvents] = useState([]);
   const [checkedTasks, setCheckedTasks] = useState([]);
 
-  const handleSearch = () => {
+  const { dispatchCalEvent, dispatchCalTask } = useContext(GlobalContext);
+
+  const profileData = useProfile();
+
+  const profile = useMemo(() => profileData || {
+    name: "N/A",
+    gender: "N/A",
+    role: "N/A",
+    phno: "N/A",
+    email: "N/A",
+    profilePicture: "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg",
+    accountStatus: "Public"
+  }, [profileData]);
+
+  const { t } = useTranslation(); // Initialize the translation hook
+
+  const handleSearch = async () => {
     if (!searchTerm.trim()) {
-      alert('Please enter a search term');
+      alert(t('Please enter a search term')); // Translated alert
       return;
     }
-    setIsSearching(true); // Show the result screen
+
+    try {
+      const userData = await searchUserByEmail(searchTerm);
+      setData(userData);
+      setIsSearching(true);
+    } catch (error) {
+      alert(error.message);
+      setData(null);
+    }
   };
 
   const handleEventSelection = (event) => {
-    if (checkedEvents.includes(event)) {
-      setCheckedEvents(checkedEvents.filter((e) => e !== event));
-    } else {
-      setCheckedEvents([...checkedEvents, event]);
-    }
+    setCheckedEvents((prev) =>
+      prev.includes(event) ? prev.filter((e) => e !== event) : [...prev, event]
+    );
   };
 
   const handleTaskSelection = (task) => {
-    if (checkedTasks.includes(task)) {
-      setCheckedTasks(checkedTasks.filter((t) => t !== task));
-    } else {
-      setCheckedTasks([...checkedTasks, task]);
-    }
+    setCheckedTasks((prev) =>
+      prev.includes(task) ? prev.filter((t) => t !== task) : [...prev, task]
+    );
   };
 
   const logCheckedEvents = () => {
-    console.log('Selected Events:', checkedEvents);
+    checkedEvents.forEach(event => {
+      dispatchCalEvent({ type: "push", payload: event });
+    });
+    setCheckedEvents([]);
   };
 
   const logCheckedTasks = () => {
-    console.log('Selected Tasks:', checkedTasks);
+    checkedTasks.forEach(task => {
+      dispatchCalTask({ type: "push", payload: task });
+    });
+    setCheckedTasks([]);
+  };
+
+  const handleBack = () => {
+    setIsSearching(false);
+    setSearchTerm("");
   };
 
   const getLabelColor = (label) => {
@@ -120,22 +94,22 @@ export default function SearchScreen() {
       red: 'rgba(255, 0, 0, 0.2)',
       purple: 'rgba(128, 0, 128, 0.2)',
     };
-    return colors[label] || 'rgba(0, 0, 0, 0.1)'; // Default light gray for unknown labels
+    return colors[label] || 'rgba(0, 0, 0, 0.1)';
   };
 
   if (!isSearching) {
     return (
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
-          <Text style={styles.heading}>Search for a User</Text>
+          <Text style={styles.heading}>{t('Search for a User')}</Text>
           <TextInput
             style={styles.input}
-            placeholder="Enter email"
+            placeholder={t('Enter email')}
             value={searchTerm}
             onChangeText={setSearchTerm}
           />
           <TouchableOpacity style={styles.button} onPress={handleSearch}>
-            <Text style={styles.buttonText}>Search</Text>
+            <Text style={styles.buttonText}>{t('Search')}</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -145,89 +119,71 @@ export default function SearchScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container}>
-        <Text style={styles.heading}>User Details</Text>
+        <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+          <Text style={styles.buttonText}>{t('Back')}</Text>
+        </TouchableOpacity>
+
+        <Text style={styles.heading}>{t('User Details')}</Text>
         <View style={styles.profileContainer}>
           <Image
             source={{ uri: data.credentials.profilePicture }}
             style={styles.profilePicture}
           />
-          <Text style={styles.text}>
-            <Text style={styles.bold}>Name:</Text> {data.credentials.name}
-          </Text>
-          <Text style={styles.text}>
-            <Text style={styles.bold}>Email:</Text> {data.credentials.email}
-          </Text>
-          <Text style={styles.text}>
-            <Text style={styles.bold}>Role:</Text> {data.credentials.role}
-          </Text>
+          <Text style={styles.text}><Text style={styles.bold}>{t('Name')}:</Text> {data.credentials.name}</Text>
+          <Text style={styles.text}><Text style={styles.bold}>{t('Email')}:</Text> {data.credentials.email}</Text>
+          <Text style={styles.text}><Text style={styles.bold}>{t('Role')}:</Text> {data.credentials.role}</Text>
         </View>
 
-        {/* Events Section */}
-        <Text style={styles.sectionHeading}>Saved Events</Text>
-        <FlatList
-          data={data.savedEvents}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => {
-            const isSelected = checkedEvents.includes(item);
-            return (
-              <TouchableOpacity
-                style={[
-                  styles.listItem,
-                  { backgroundColor: getLabelColor(item.label) },
-                  isSelected && styles.selectedItem,
-                ]}
-                onPress={() => handleEventSelection(item)}
-              >
-                <Text style={styles.text}>
-                  <Text style={styles.bold}>Title:</Text> {item.title}
-                </Text>
-                <Text style={styles.text}>
-                  <Text style={styles.bold}>Label:</Text> {item.label}
-                </Text>
-                <Text style={styles.text}>
-                  <Text style={styles.bold}>Day:</Text>{' '}
-                  {new Date(item.day).toDateString()}
-                </Text>
-              </TouchableOpacity>
-            );
-          }}
-        />
-        <TouchableOpacity style={styles.button} onPress={logCheckedEvents}>
-          <Text style={styles.buttonText}>Add Events to Your Account</Text>
-        </TouchableOpacity>
+        <Text style={styles.sectionHeading}>{t('Saved Events')}</Text>
+        {data.savedEvents?.length === 0 ? (
+          <Text style={styles.noDataText}>{t('No events to display')}</Text>
+        ) : (
+          data.savedEvents?.map((item) => (
+            <TouchableOpacity
+              key={item.id}
+              style={[
+                styles.listItem,
+                { backgroundColor: getLabelColor(item.label) },
+                checkedEvents.includes(item) && styles.selectedItem,
+              ]}
+              onPress={() => handleEventSelection(item)}
+            >
+              <Text style={styles.text}><Text style={styles.bold}>{t('Title')}:</Text> {item.title}</Text>
+              <Text style={styles.text}><Text style={styles.bold}>{t('Label')}:</Text> {item.label}</Text>
+              <Text style={styles.text}><Text style={styles.bold}>{t('Day')}:</Text> {new Date(item.day).toDateString()}</Text>
+            </TouchableOpacity>
+          ))
+        )}
 
-        {/* Tasks Section */}
-        <Text style={styles.sectionHeading}>Saved Tasks</Text>
-        <FlatList
-          data={data.savedTasks}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => {
-            const isSelected = checkedTasks.includes(item);
-            return (
-              <TouchableOpacity
-                style={[styles.listItem, isSelected && styles.selectedItem]}
-                onPress={() => handleTaskSelection(item)}
-              >
-                <Text style={styles.text}>
-                  <Text style={styles.bold}>Title:</Text> {item.title}
-                </Text>
-                <Text style={styles.text}>
-                  <Text style={styles.bold}>Date:</Text>{' '}
-                  {new Date(item.date).toDateString()}
-                </Text>
-                <Text style={styles.text}>
-                  <Text style={styles.bold}>Start Time:</Text> {item.startTime}
-                </Text>
-                <Text style={styles.text}>
-                  <Text style={styles.bold}>End Time:</Text> {item.endTime}
-                </Text>
-              </TouchableOpacity>
-            );
-          }}
-        />
-        <TouchableOpacity style={styles.button} onPress={logCheckedTasks}>
-          <Text style={styles.buttonText}>Add Tasks to Your Account</Text>
-        </TouchableOpacity>
+        {checkedEvents.length > 0 && (
+          <TouchableOpacity style={styles.button} onPress={logCheckedEvents}>
+            <Text style={styles.buttonText}>{t('Add Events to Your Account')}</Text>
+          </TouchableOpacity>
+        )}
+
+        <Text style={styles.sectionHeading}>{t('Saved Tasks')}</Text>
+        {data.savedTasks?.length === 0 ? (
+          <Text style={styles.noDataText}>{t('No tasks to display')}</Text>
+        ) : (
+          data.savedTasks?.map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[styles.listItem, checkedTasks.includes(item) && styles.selectedItem]}
+              onPress={() => handleTaskSelection(item)}
+            >
+              <Text style={styles.text}><Text style={styles.bold}>{t('Title')}:</Text> {item.title}</Text>
+              <Text style={styles.text}><Text style={styles.bold}>{t('Date')}:</Text> {new Date(item.date).toDateString()}</Text>
+              <Text style={styles.text}><Text style={styles.bold}>{t('Start Time')}:</Text> {item.startTime}</Text>
+              <Text style={styles.text}><Text style={styles.bold}>{t('End Time')}:</Text> {item.endTime}</Text>
+            </TouchableOpacity>
+          ))
+        )}
+
+        {checkedTasks.length > 0 && (
+          <TouchableOpacity style={styles.button} onPress={logCheckedTasks}>
+            <Text style={styles.buttonText}>{t('Add Tasks to Your Account')}</Text>
+          </TouchableOpacity>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -299,5 +255,14 @@ const styles = StyleSheet.create({
   selectedItem: {
     borderColor: '#007BFF',
     borderWidth: 2,
+  },
+  backButton: {
+    padding: 10,
+  },
+  noDataText: {
+    fontSize: 16,
+    color: 'gray',
+    textAlign: 'center',
+    marginTop: 10,
   },
 });

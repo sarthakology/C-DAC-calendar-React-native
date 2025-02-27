@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Checkbox } from "react-native-paper";
 import GlobalContext from "../context/GlobalContext";
+import { useTranslation } from 'react-i18next'; // Import translation hook
 
 const TaskCard = ({ task, onPress }) => (
   <TouchableOpacity onPress={() => onPress(task.id)}>
@@ -10,7 +11,9 @@ const TaskCard = ({ task, onPress }) => (
         <Text style={[styles.taskTitle, task.completed && styles.completedText]}>
           {task.title}
         </Text>
-        <Text style={styles.taskDate}>Date: {new Date(task.date).toDateString()}</Text>
+        <Text style={styles.taskDate}>
+          {`${useTranslation().t('Date')}: {new Date(task.date).toDateString()}`}
+        </Text>
         <Text style={styles.taskDescription}>{task.description}</Text>
       </View>
       <Checkbox status={task.completed ? "checked" : "unchecked"} color="#4CAF50" />
@@ -19,6 +22,8 @@ const TaskCard = ({ task, onPress }) => (
 );
 
 export default function TaskList({ monthIndex }) {
+  const { t } = useTranslation(); // Initialize the translation hook
+  
   const { savedTasks, dispatchCalTask } = useContext(GlobalContext);
 
   const handleTaskPress = (taskId) => {
@@ -31,7 +36,7 @@ export default function TaskList({ monthIndex }) {
  
   return (
     <View style={styles.tasksContainer}>
-      <Text style={styles.tasksHeader}>Tasks for the Month</Text>
+      <Text style={styles.tasksHeader}>{t('Tasks for the Month')}</Text>
       {savedTasks
         .filter((task) => new Date(task.date).getMonth() === monthIndex)
         .sort((a, b) => a.completed - b.completed)
@@ -41,7 +46,6 @@ export default function TaskList({ monthIndex }) {
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   tasksContainer: {

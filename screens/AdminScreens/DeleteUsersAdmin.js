@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { SafeAreaView, StyleSheet, View, Text, FlatList, TouchableOpacity, Alert } from 'react-native';
 import axios from 'axios';
 import API_URLS from '../../ApiUrls';
+import { useTranslation } from 'react-i18next';
 
 export default function DeleteUsersAdmin() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -13,34 +15,33 @@ export default function DeleteUsersAdmin() {
         const response = await axios.get(API_URLS.GET_ROLE);
         setUsers(response.data);
       } catch (error) {
-        Alert.alert('Error', 'Failed to fetch users.');
+        Alert.alert(t('Error'), t('Failed to fetch users.'));
       } finally {
         setLoading(false);
       }
     };
     fetchUsers();
-  }, []);
+  }, [t]);
 
   const handleDelete = (email) => {
-    // Confirmation alert before deletion
     Alert.alert(
-      'Delete User',
-      `Are you sure you want to delete ${email}?`,
+      t('Delete User'),
+      t('Are you sure you want to delete {{email}}?', { email }),
       [
         {
-          text: 'Cancel',
+          text: t('Cancel'),
           style: 'cancel',
         },
         {
-          text: 'Delete',
+          text: t('Delete'),
           style: 'destructive',
           onPress: async () => {
             try {
               await axios.delete(API_URLS.DELETE_USER(email));
-              setUsers(users.filter((user) => user.email !== email)); // Remove deleted user from state
-              Alert.alert('Success', `${email} has been deleted.`);
+              setUsers(users.filter((user) => user.email !== email));
+              Alert.alert(t('Success'), t('{{email}} has been deleted.', { email }));
             } catch (error) {
-              Alert.alert('Error', `Failed to delete user ${email}`);
+              Alert.alert(t('Error'), t('Failed to delete user {{email}}', { email }));
             }
           },
         },
@@ -55,7 +56,7 @@ export default function DeleteUsersAdmin() {
         style={styles.deleteButton}
         onPress={() => handleDelete(item.email)}
       >
-        <Text style={styles.deleteButtonText}>Delete</Text>
+        <Text style={styles.deleteButtonText}>{t('Delete')}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -64,7 +65,7 @@ export default function DeleteUsersAdmin() {
     return (
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
-          <Text style={styles.header}>Loading...</Text>
+          <Text style={styles.header}>{t('Loading...')}</Text>
         </View>
       </SafeAreaView>
     );
@@ -73,7 +74,7 @@ export default function DeleteUsersAdmin() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <Text style={styles.header}>Manage User Deletion</Text>
+        <Text style={styles.header}>{t('Manage User Deletion')}</Text>
         <FlatList
           data={users}
           keyExtractor={(item) => item.email}

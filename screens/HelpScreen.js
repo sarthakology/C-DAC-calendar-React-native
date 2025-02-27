@@ -9,33 +9,35 @@ import {
 } from 'react-native'; // Added Linking import
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 export default function HelpScreen({ navigation }) {
+  const { t } = useTranslation();
   const options = [
-    { id: '1', label: 'Trash', onPress: () => navigation.navigate('trash') },
+    { id: '1', label: t('Trash'), onPress: () => navigation.navigate('trash') },
     {
       id: '2',
-      label: 'About us',
+      label: t('About Us'),
       onPress: () => Linking.openURL('https://www.cdac.in/index.aspx?id=about'),
     },
     {
       id: '3',
-      label: 'Contact Support',
+      label: t('Contact Support'),
       onPress: () => Linking.openURL('https://www.cdac.in/index.aspx?id=contact'),
     },
     {
       id: '4',
-      label: 'App Version',
-      onPress: () => Alert.alert('App Version', 'version 1.0.0'),
+      label: t('App Version'),
+      onPress: () => Alert.alert(t('App Version'), t('version 1.0.0')),
     },
     {
       id: '5',
-      label: 'Terms & Conditions',
+      label: t('Terms & Conditions'),
       onPress: () => navigation.navigate('Terms-&-Conditions'),
     },
     {
       id: '6',
-      label: 'Send feedback to C-DAC',
+      label: t('Send feedback to C-DAC'),
       onPress: () => Linking.openURL('https://cdac.in/index.aspx?id=reach_us'),
     },
   ];
@@ -49,7 +51,7 @@ export default function HelpScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <Text style={styles.header}>Help & Support</Text>
+        <Text style={styles.header}>{t('Help & Support')}</Text>
         <FlatList
           data={options}
           keyExtractor={(item) => item.id}

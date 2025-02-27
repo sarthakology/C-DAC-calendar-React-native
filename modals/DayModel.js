@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { View, Text, Modal, StyleSheet, TouchableOpacity } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons"; // Import Ionicons
 import GlobalContext from "../context/GlobalContext";
+import { useTranslation } from 'react-i18next'; // Import translation hook
 
 // Function to get background color based on label
 const getLabelColor = (label) => {
@@ -18,6 +19,7 @@ const getLabelColor = (label) => {
 
 const DayModal = ({ isVisible, onClose, selectedDay, events }) => {
   const { setSelectedEvent, setShowEventModal, setShowTaskModal } = useContext(GlobalContext);
+  const { t } = useTranslation(); // Initialize the translation hook
 
   // Function to handle event card click
   const handleEventClick = (event) => {
@@ -52,7 +54,7 @@ const DayModal = ({ isVisible, onClose, selectedDay, events }) => {
 
           {/* Event List Section */}
           <View style={styles.eventSection}>
-            <Text style={styles.eventSectionTitle}>Events</Text>
+            <Text style={styles.eventSectionTitle}>{t('events')}</Text>
             <View style={styles.eventList}>
               {events.length > 0 ? (
                 events.map((event, index) => (
@@ -70,7 +72,7 @@ const DayModal = ({ isVisible, onClose, selectedDay, events }) => {
                   </TouchableOpacity>
                 ))
               ) : (
-                <Text style={styles.noEvents}>No events for this day.</Text>
+                <Text style={styles.noEvents}>{t('noEvents')}</Text>
               )}
             </View>
           </View>
@@ -78,10 +80,10 @@ const DayModal = ({ isVisible, onClose, selectedDay, events }) => {
           {/* Buttons for Create Event and Create Task */}
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.button} onPress={handleCreateEvent}>
-              <Text style={styles.buttonText}>Create Event</Text>
+              <Text style={styles.buttonText}>{t('createEvent')}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={handleCreateTask}>
-              <Text style={styles.buttonText}>Create Task</Text>
+              <Text style={styles.buttonText}>{t('createTask')}</Text>
             </TouchableOpacity>
           </View>
         </View>

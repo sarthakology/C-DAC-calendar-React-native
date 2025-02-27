@@ -8,8 +8,11 @@ import {
   TouchableOpacity,
 } from "react-native";
 import GlobalContext from "../../context/GlobalContext";
+import { useTranslation } from 'react-i18next'; // Import the translation hook
 
 export default function ListScreen() {
+    const { t } = useTranslation(); // Initialize the translation hook
+  
   const {
     savedEvents,
     savedTasks,
@@ -47,30 +50,28 @@ export default function ListScreen() {
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
         {/* Events Section */}
-        <Text style={styles.header}>Events</Text>
+        <Text style={styles.header}>{t('events')}</Text>
         {savedEvents.map((event) => (
           <TouchableOpacity key={event.id} onPress={() => handleEventPress(event)}>
             <View style={[styles.card, { backgroundColor: getLabelColor(event.label) }]}>
               <Text style={styles.title}>{event.title}</Text>
               <Text style={styles.description}>{event.description}</Text>
-              <Text style={styles.label}>Label: {event.label}</Text>
-              <Text style={styles.day}>Day: {new Date(event.day).toDateString()}</Text>
+              <Text style={styles.label}>{t('label')}: {event.label}</Text>
+              <Text style={styles.day}>{t('day')}: {new Date(event.day).toDateString()}</Text>
             </View>
           </TouchableOpacity>
         ))}
 
         {/* Tasks Section */}
-        <Text style={styles.header}>Tasks</Text>
+        <Text style={styles.header}>{t('tasks')}</Text>
         {savedTasks.map((task) => (
           <TouchableOpacity key={task.id} onPress={() => handleTaskPress(task)}>
             <View style={[styles.card, { backgroundColor: getLabelColor(task.label) }]}>
               <Text style={styles.title}>{task.title}</Text>
               <Text style={styles.description}>{task.description}</Text>
-              <Text style={styles.date}>Date: {task.date}</Text>
-              <Text style={styles.time}>
-                Time: {task.startTime} - {task.endTime}
-              </Text>
-              <Text style={styles.reminder}>Reminder: {task.reminder}</Text>
+              <Text style={styles.date}>{t('date')}: {task.date}</Text>
+              <Text style={styles.time}>{t('time')}: {task.startTime} - {task.endTime}</Text>
+              <Text style={styles.reminder}>{t('reminder')}: {task.reminder}</Text>
             </View>
           </TouchableOpacity>
         ))}

@@ -12,11 +12,13 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import axios from 'axios';
 import API_URLS from '../../ApiUrls';
+import { useTranslation } from 'react-i18next';
 
 export default function CountriesAdminScreen() {
   const [countries, setCountries] = useState([]);
   const [newCountry, setNewCountry] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchCountries = async () => {
@@ -24,7 +26,7 @@ export default function CountriesAdminScreen() {
         const response = await axios.get(API_URLS.GET_MASTER_COUNTRIES);
         setCountries(response.data);
       } catch (err) {
-        Alert.alert('Error', 'Failed to load countries.');
+        Alert.alert(t('Error'), t('Failed to load countries.'));
       } finally {
         setIsLoading(false);
       }
@@ -44,12 +46,12 @@ export default function CountriesAdminScreen() {
         const response = await axios.post(API_URLS.CREATE_MASTER_COUNTRIES, { country: newCountry });
         setCountries([...countries, response.data.country]);
         setNewCountry('');
-        Alert.alert('Success', 'Country added successfully!');
+        Alert.alert(t('Success'), t('Country added successfully!'));
       } catch (err) {
-        Alert.alert('Error', 'Failed to create country.');
+        Alert.alert(t('Error'), t('Failed to create country.'));
       }
     } else {
-      Alert.alert('Error', 'Country name cannot be empty!');
+      Alert.alert(t('Error'), t('Country name cannot be empty!'));
     }
   };
 
@@ -57,9 +59,9 @@ export default function CountriesAdminScreen() {
     try {
       await axios.delete(API_URLS.DELETE_MASTER_COUNTRIES(id));
       setCountries(countries.filter((country) => country.id !== id));
-      Alert.alert('Success', 'Country deleted successfully!');
+      Alert.alert(t('Success'), t('Country deleted successfully!'));
     } catch (err) {
-      Alert.alert('Error', 'Failed to delete country.');
+      Alert.alert(t('Error'), t('Failed to delete country.'));
     }
   };
 
@@ -67,7 +69,7 @@ export default function CountriesAdminScreen() {
     try {
       await axios.put(API_URLS.UPDATE_MASTER_COUNTRIES(id), { id, country: updatedCountry });
     } catch (err) {
-      Alert.alert('Error', 'Failed to update country.');
+      Alert.alert(t('Error'), t('Failed to update country.'));
     }
   };
 
@@ -76,9 +78,9 @@ export default function CountriesAdminScreen() {
       for (const country of countries) {
         await handleUpdateCountry(country.id, country.country);
       }
-      Alert.alert('Success', 'Countries updated successfully!');
+      Alert.alert(t('Success'), t('Countries updated successfully!'));
     } catch (err) {
-      Alert.alert('Error', 'Failed to update countries.');
+      Alert.alert(t('Error'), t('Failed to update countries.'));
     }
   };
 
@@ -93,7 +95,7 @@ export default function CountriesAdminScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <Text style={styles.header}>Manage Countries</Text>
+        <Text style={styles.header}>{t('Manage Countries')}</Text>
         <FlatList
           data={countries}
           keyExtractor={(item) => item.id.toString()}
@@ -109,7 +111,7 @@ export default function CountriesAdminScreen() {
                 style={styles.deleteButton}
                 onPress={() => handleDeleteCountry(item.id)}
               >
-                <Text style={styles.deleteButtonText}>Delete</Text>
+                <Text style={styles.deleteButtonText}>{t('Delete')}</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -120,14 +122,14 @@ export default function CountriesAdminScreen() {
             style={styles.input}
             value={newCountry}
             onChangeText={setNewCountry}
-            placeholder="Add a new country"
+            placeholder={t('Add a new country')}
           />
           <TouchableOpacity style={styles.addButton} onPress={handleAddCountry}>
-            <Text style={styles.addButtonText}>Add Country</Text>
+            <Text style={styles.addButtonText}>{t('Add Country')}</Text>
           </TouchableOpacity>
         </View>
         <TouchableOpacity style={styles.saveButton} onPress={handleSubmit}>
-          <Text style={styles.saveButtonText}>Save Changes</Text>
+          <Text style={styles.saveButtonText}>{t('Save Changes')}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

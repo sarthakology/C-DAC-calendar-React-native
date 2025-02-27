@@ -15,9 +15,11 @@ import axios from 'axios';
 import useProfile from '../../../userDataBackend/ProfileData';
 import API_URLS from '../../../ApiUrls';
 import refreshJWTToken from '../../../services/RefreshJWTToken';
+import { useTranslation } from 'react-i18next'; // Import translation hook
 
 export default function EditProfileScreen({ navigation }) {
   const profileData = useProfile();
+  const { t } = useTranslation(); // Initialize the translation hook
 
   const profile = useMemo(() => profileData || {
     name: "N/A",
@@ -64,11 +66,11 @@ export default function EditProfileScreen({ navigation }) {
         },
       });
 
-      Alert.alert('Success', 'Profile updated successfully. Pull to refresh Profile');
+      Alert.alert(t('successTitle'), t('successMessage'));
       navigation.goBack();
     } catch (error) {
       console.error('Error updating profile:', error);
-      Alert.alert('Error', 'Failed to update profile. Please try again.');
+      Alert.alert(t('errorTitle'), t('errorMessage'));
     }
   };
 
@@ -96,17 +98,17 @@ export default function EditProfileScreen({ navigation }) {
             <Image source={{ uri: profile.profilePicture }} style={styles.profilePicture} />
           </TouchableOpacity>
 
-          <Text style={styles.title}>Edit Profile</Text>
+          <Text style={styles.title}>{t('editProfile')}</Text>
 
           {/* Name Input */}
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Name</Text>
+            <Text style={styles.label}>{t('name')}</Text>
             <TextInput style={styles.input} value={name} onChangeText={setName} />
           </View>
 
           {/* Gender Selection */}
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Gender</Text>
+            <Text style={styles.label}>{t('gender')}</Text>
             <TouchableOpacity style={styles.dropdown} onPress={() => setModalVisible(true)}>
               <Text style={styles.dropdownText}>{gender}</Text>
             </TouchableOpacity>
@@ -114,13 +116,13 @@ export default function EditProfileScreen({ navigation }) {
 
           {/* Role (Read-only) */}
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Role</Text>
+            <Text style={styles.label}>{t('role')}</Text>
             <TextInput style={styles.input} value={profile.role} editable={false} />
           </View>
 
           {/* Account Status Selection */}
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Account Status</Text>
+            <Text style={styles.label}>{t('accountStatus')}</Text>
             <TouchableOpacity style={styles.dropdown} onPress={() => setStatusModalVisible(true)}>
               <Text style={styles.dropdownText}>{accountStatus}</Text>
             </TouchableOpacity>
@@ -128,7 +130,7 @@ export default function EditProfileScreen({ navigation }) {
 
           {/* Phone Number Input */}
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Phone Number</Text>
+            <Text style={styles.label}>{t('phoneNumber')}</Text>
             <TextInput
               style={styles.input}
               value={phno.toString()}
@@ -139,13 +141,13 @@ export default function EditProfileScreen({ navigation }) {
 
           {/* Email (Read-only) */}
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Email</Text>
+            <Text style={styles.label}>{t('email')}</Text>
             <TextInput style={styles.input} value={profile.email} editable={false} />
           </View>
 
           {/* Save Button */}
           <TouchableOpacity style={styles.button} onPress={handleSave}>
-            <Text style={styles.buttonText}>Save Changes</Text>
+            <Text style={styles.buttonText}>{t('saveChanges')}</Text>
           </TouchableOpacity>
 
         </View>
@@ -160,14 +162,14 @@ export default function EditProfileScreen({ navigation }) {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Select Gender</Text>
+            <Text style={styles.modalTitle}>{t('selectGender')}</Text>
             {["Male", "Female", "Other"].map((option) => (
               <TouchableOpacity key={option} style={styles.modalOption} onPress={() => handleGenderSelect(option)}>
                 <Text style={styles.modalText}>{option}</Text>
               </TouchableOpacity>
             ))}
             <TouchableOpacity style={[styles.modalOption, styles.cancelButton]} onPress={() => setModalVisible(false)}>
-              <Text style={styles.modalText}>Cancel</Text>
+              <Text style={styles.modalText}>{t('cancel')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -182,14 +184,14 @@ export default function EditProfileScreen({ navigation }) {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Select Account Status</Text>
+            <Text style={styles.modalTitle}>{t('selectAccountStatus')}</Text>
             {["Public", "Private"].map((status) => (
               <TouchableOpacity key={status} style={styles.modalOption} onPress={() => handleStatusSelect(status)}>
                 <Text style={styles.modalText}>{status}</Text>
               </TouchableOpacity>
             ))}
             <TouchableOpacity style={[styles.modalOption, styles.cancelButton]} onPress={() => setStatusModalVisible(false)}>
-              <Text style={styles.modalText}>Cancel</Text>
+              <Text style={styles.modalText}>{t('cancel')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -198,6 +200,7 @@ export default function EditProfileScreen({ navigation }) {
     </SafeAreaView>
   );
 }
+
 
 const styles = StyleSheet.create({
   safeArea: {

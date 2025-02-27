@@ -14,8 +14,10 @@ import useLanguages from '../../mastersApi/Languages';
 import useCountries from '../../mastersApi/Countries';
 import useDateFormats from '../../mastersApi/DateFormats';
 import useTimezones from '../../mastersApi/TimeZones';
+import { useTranslation } from 'react-i18next'; // Import the translation hook
 
 const SettingsScreen = ({ navigation }) => {
+  const { t, i18n } = useTranslation(); // Initialize the translation hook
   const rawLanguageOptions = useLanguages();
   const rawCountryOptions = useCountries();
   const rawDateFormatOptions = useDateFormats();
@@ -42,6 +44,8 @@ const SettingsScreen = ({ navigation }) => {
   const [openDateFormat, setOpenDateFormat] = useState(false);
   const [openPrimaryTZ, setOpenPrimaryTZ] = useState(false);
   const [openTimeFormat, setOpenTimeFormat] = useState(false);
+
+
  
   useEffect(() => {
     const loadSettings = async () => {
@@ -70,12 +74,14 @@ const SettingsScreen = ({ navigation }) => {
       dateFormat,
       primaryTimeZone,
       timeFormat,
+      
+
     };
 
     try {
       await AsyncStorage.setItem('userSettings', JSON.stringify(settings));
+      i18n.changeLanguage(settings.language);
       console.log('Settings saved:', settings);
-      navigation.goBack();
     } catch (error) {
       console.error('Error saving settings:', error);
     }
@@ -87,10 +93,10 @@ const SettingsScreen = ({ navigation }) => {
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <View>
-          <Text style={styles.header}>Language and Region</Text>
+          <Text style={styles.header}>{t('Language and Region')}</Text>
 
           <View style={[styles.dropdownWrapper, { zIndex: 6 }]}>
-            <Text style={styles.label}>Language</Text>
+            <Text style={styles.label}>{t('Language')}</Text>
             <DropDownPicker
               open={openLanguage}
               value={language}
@@ -103,7 +109,7 @@ const SettingsScreen = ({ navigation }) => {
           </View>
 
           <View style={[styles.dropdownWrapper, { zIndex: 5 }]}>
-            <Text style={styles.label}>Country</Text>
+            <Text style={styles.label}>{t('Country')}</Text>
             <DropDownPicker
               open={openCountry}
               value={country}
@@ -116,7 +122,7 @@ const SettingsScreen = ({ navigation }) => {
           </View>
 
           <View style={[styles.dropdownWrapper, { zIndex: 4 }]}>
-            <Text style={styles.label}>Date Format</Text>
+            <Text style={styles.label}>{t('Date Format')}</Text>
             <DropDownPicker
               open={openDateFormat}
               value={dateFormat}
@@ -129,7 +135,7 @@ const SettingsScreen = ({ navigation }) => {
           </View>
 
           <View style={[styles.dropdownWrapper, { zIndex: 3 }]}>
-            <Text style={styles.label}>Time Format</Text>
+            <Text style={styles.label}>{t('Time Format')}</Text>
             <DropDownPicker
               open={openTimeFormat}
               value={timeFormat}
@@ -142,7 +148,7 @@ const SettingsScreen = ({ navigation }) => {
           </View>
 
           <View style={[styles.dropdownWrapper, { zIndex: 2 }]}>
-            <Text style={styles.label}>Primary Time Zone</Text>
+            <Text style={styles.label}>{t('Primary Time Zone')}</Text>
             <DropDownPicker
               open={openPrimaryTZ}
               value={primaryTimeZone}
@@ -155,7 +161,7 @@ const SettingsScreen = ({ navigation }) => {
           </View>
 
           <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-            <Text style={styles.buttonText}>Save Changes</Text>
+            <Text style={styles.buttonText}>{t('Save Changes')}</Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>

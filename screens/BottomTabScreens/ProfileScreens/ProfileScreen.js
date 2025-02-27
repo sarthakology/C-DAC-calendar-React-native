@@ -6,8 +6,12 @@ import GlobalContext from "../../../context/GlobalContext";
 import axios from 'axios';
 import refreshJWTToken from '../../../services/RefreshJWTToken';
 import API_URLS from '../../../ApiUrls';
+import { useTranslation } from 'react-i18next'; // Import translation hook
+
 
 export default function ProfileScreen({ navigation }) {
+    const { t } = useTranslation(); // Initialize the translation hook
+  
   const { resetAppData } = useContext(GlobalContext);
   const [profile, setProfile] = useState({});
   const [refreshing, setRefreshing] = useState(false);
@@ -44,7 +48,7 @@ export default function ProfileScreen({ navigation }) {
   const handleLogout = async () => {
     try {
       resetAppData();
-      Alert.alert('Logout', 'You have been logged out.');
+      Alert.alert(t('logout'), t('logout_message'));
       navigation.navigate('Login');
     } catch (error) {
       console.error('Logout Error:', error);
@@ -72,18 +76,18 @@ export default function ProfileScreen({ navigation }) {
           <Image source={{ uri: profile.profilePicture || "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg" }} style={styles.profilePicture} />
           <Text style={styles.name}>{profile.name || "N/A"}</Text>
 
-          <ProfileInfo label="Gender" value={profile.gender || "N/A"} />
-          <ProfileInfo label="Role" value={profile.role || "N/A"} />
-          <ProfileInfo label="Phone Number" value={profile.phno || "N/A"} />
-          <ProfileInfo label="Email" value={profile.email || "N/A"} />
-          <ProfileInfo label="Status" value={profile.accountStatus || "N/A"} />
+          <ProfileInfo label={t('gender')} value={profile.gender || "N/A"} />
+          <ProfileInfo label={t('role')} value={profile.role || "N/A"} />
+          <ProfileInfo label={t('phone_number')} value={profile.phno || "N/A"} />
+          <ProfileInfo label={t('email')} value={profile.email || "N/A"} />
+          <ProfileInfo label={t('status')} value={profile.accountStatus || "N/A"} />
 
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.button} onPress={handleEditProfile}>
-              <Text style={styles.buttonText}>Edit Profile</Text>
+              <Text style={styles.buttonText}>{t('edit_profile')}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.button, styles.logoutButton]} onPress={handleLogout}>
-              <Text style={styles.buttonText}>Logout</Text>
+              <Text style={styles.buttonText}>{t('logout')}</Text>
             </TouchableOpacity>
           </View>
         </View>

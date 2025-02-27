@@ -4,6 +4,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Import translation files
 import en from './Translations/en.json';
+import hi from './Translations/hi.json';
+import fr from './Translations/fr.json';
+import gr from './Translations/gr.json';
+import ru from './Translations/ru.json';
+import ja from './Translations/ja.json';
+import ko from './Translations/ko.json';
 
 
 // Initialize i18next
@@ -11,10 +17,16 @@ i18n
   .use(initReactI18next)
   .init({
     resources: {
-      en: { translation: en },
+      english: { translation: en },
+      hindi: { translation: hi },
+      french: { translation: fr },
+      german: { translation: gr },
+      russian: { translation: ru },
+      japanese: { translation: ja },
+      korean: { translation: ko },
     },
-    lng: 'en', // Default language
-    fallbackLng: 'en', // Fallback if a translation is missing
+    lng: 'english', // Default language
+    fallbackLng: 'enlish', // Fallback if a translation is missing
     compatibilityJSON: 'v3', // Ensures compatibility with React Native
     interpolation: { escapeValue: false },
     react: {

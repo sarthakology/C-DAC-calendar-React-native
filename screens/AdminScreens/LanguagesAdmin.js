@@ -12,11 +12,13 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import API_URLS from '../../ApiUrls';
+import { useTranslation } from 'react-i18next';
 
 const LanguagesAdmin = () => {
   const [languages, setLanguages] = useState([]);
   const [newLanguage, setNewLanguage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchLanguages = async () => {
@@ -24,7 +26,7 @@ const LanguagesAdmin = () => {
         const response = await axios.get(API_URLS.GET_MASTER_LANGUAGE);
         setLanguages(response.data);
       } catch (err) {
-        Alert.alert('Error', 'Failed to load languages.');
+        Alert.alert(t('error'), t('failed To Load Languages'));
       } finally {
         setIsLoading(false);
       }
@@ -40,16 +42,16 @@ const LanguagesAdmin = () => {
 
   const handleAddLanguage = async () => {
     if (!newLanguage.trim()) {
-      Alert.alert('Error', 'Language cannot be empty!');
+      Alert.alert(t('error'), t('language Cannot Be Empty'));
       return;
     }
     try {
       const response = await axios.post(API_URLS.CREATE_MASTER_LANGUAGE, { language: newLanguage });
       setLanguages([...languages, response.data.language]);
       setNewLanguage('');
-      Alert.alert('Success', 'Language added successfully!');
+      Alert.alert(t('success'), t('language Added Successfully'));
     } catch (err) {
-      Alert.alert('Error', 'Failed to create language.');
+      Alert.alert(t('error'), t('failed To Create Language'));
     }
   };
 
@@ -57,9 +59,9 @@ const LanguagesAdmin = () => {
     try {
       await axios.delete(API_URLS.DELETE_MASTER_LANGUAGE(id));
       setLanguages(languages.filter((language) => language.id !== id));
-      Alert.alert('Success', 'Language deleted successfully!');
+      Alert.alert(t('success'), t('language Deleted Successfully'));
     } catch (err) {
-      Alert.alert('Error', 'Failed to delete language.');
+      Alert.alert(t('error'), t('failed To Delete Language'));
     }
   };
 
@@ -67,7 +69,7 @@ const LanguagesAdmin = () => {
     try {
       await axios.put(API_URLS.UPDATE_MASTER_LANGUAGE(id), { id, language: updatedLanguage });
     } catch (err) {
-      Alert.alert('Error', 'Failed to update language.');
+      Alert.alert(t('error'), t('failed To Update Language'));
     }
   };
 
@@ -76,9 +78,9 @@ const LanguagesAdmin = () => {
       for (const language of languages) {
         await handleUpdateLanguage(language.id, language.language);
       }
-      Alert.alert('Success', 'All languages updated successfully!');
+      Alert.alert(t('success'), t('all Languages Updated Successfully'));
     } catch (err) {
-      Alert.alert('Error', 'Failed to update languages.');
+      Alert.alert(t('error'), t('failed To Update Languages'));
     }
   };
 
@@ -94,10 +96,11 @@ const LanguagesAdmin = () => {
         style={styles.deleteButton}
         onPress={() => handleDeleteLanguage(item.id)}
       >
-        <Text style={styles.deleteButtonText}>Delete</Text>
+        <Text style={styles.deleteButtonText}>{t('delete')}</Text>
       </TouchableOpacity>
     </View>
   );
+
   if (isLoading) {
     return (
       <View style={styles.loaderContainer}>
@@ -109,7 +112,7 @@ const LanguagesAdmin = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <Text style={styles.header}>Edit Languages</Text>
+        <Text style={styles.header}>{t('edit Languages')}</Text>
         <FlatList
           data={languages}
           keyExtractor={(item) => item.id.toString()}
@@ -121,20 +124,20 @@ const LanguagesAdmin = () => {
             style={styles.input}
             value={newLanguage}
             onChangeText={setNewLanguage}
-            placeholder="Enter new language"
+            placeholder={t('enter New Language')}
           />
           <TouchableOpacity
             style={styles.addButton}
             onPress={handleAddLanguage}
           >
-            <Text style={styles.addButtonText}>Add Language</Text>
+            <Text style={styles.addButtonText}>{t('add Language')}</Text>
           </TouchableOpacity>
         </View>
         <TouchableOpacity
           style={styles.saveButton}
           onPress={handleSubmit}
         >
-          <Text style={styles.saveButtonText}>Save Changes</Text>
+          <Text style={styles.saveButtonText}>{t('save Changes')}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

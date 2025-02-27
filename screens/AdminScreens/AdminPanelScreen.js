@@ -7,15 +7,17 @@ import {
 } from 'react-native';
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 export default function AdminPanelScreen({ navigation }) {
+  const { t } = useTranslation();
   const options = [
-    { id: '1', label: 'Languages', onPress: () => navigation.navigate('languages') },
-    { id: '2', label: 'countries', onPress: () => navigation.navigate('countries') },
-    { id: '3', label: 'timezones', onPress: () => navigation.navigate('timezones') },
-    { id: '4', label: 'formats', onPress: () => navigation.navigate('formats') },
-    { id: '5', label: 'role Update', onPress: () => navigation.navigate('roleUpdate') },
-    { id: '6', label: 'delete Users', onPress: () => navigation.navigate('deleteUsers') },
+    { id: '1', label: t('Languages'), onPress: () => navigation.navigate('languages') },
+    { id: '2', label: t('countries'), onPress: () => navigation.navigate('countries') },
+    { id: '3', label: t('timezones'), onPress: () => navigation.navigate('timezones') },
+    { id: '4', label: t('formats'), onPress: () => navigation.navigate('formats') },
+    { id: '5', label: t('role Update'), onPress: () => navigation.navigate('roleUpdate') },
+    { id: '6', label: t('delete Users'), onPress: () => navigation.navigate('deleteUsers') },
   ];
 
   const renderItem = ({ item }) => (
@@ -27,7 +29,7 @@ export default function AdminPanelScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <Text style={styles.header}>Admin Panel</Text>
+        <Text style={styles.header}>{t('Admin Panel')}</Text>
         <FlatList
           data={options}
           keyExtractor={(item) => item.id}

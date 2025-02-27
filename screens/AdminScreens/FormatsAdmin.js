@@ -12,8 +12,10 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import API_URLS from '../../ApiUrls';
+import { useTranslation } from 'react-i18next';
 
 const FormatsAdmin = () => {
+  const { t } = useTranslation();
   const [formats, setFormats] = useState([]);
   const [newFormat, setNewFormat] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -24,13 +26,13 @@ const FormatsAdmin = () => {
         const response = await axios.get(API_URLS.GET_MASTER_DATEFORMAT);
         setFormats(response.data);
       } catch (err) {
-        Alert.alert('Error', 'Failed to load formats.');
+        Alert.alert(t('Error'), t('Failed to load formats.'));
       } finally {
         setIsLoading(false);
       }
     };
     fetchFormats();
-  }, []);
+  }, [t]);
 
   const handleFormatChange = (index, updatedFormat) => {
     const updatedFormats = [...formats];
@@ -40,20 +42,20 @@ const FormatsAdmin = () => {
 
   const handleAddFormat = async () => {
     if (!newFormat.trim()) {
-      Alert.alert('Error', 'Format cannot be empty!');
+      Alert.alert(t('Error'), t('Format cannot be empty!'));
       return;
     }
-    if (formats.some(f => f.format === newFormat)) {
-      Alert.alert('Error', 'Format already exists!');
+    if (formats.some((f) => f.format === newFormat)) {
+      Alert.alert(t('Error'), t('Format already exists!'));
       return;
     }
     try {
       const response = await axios.post(API_URLS.CREATE_MASTER_DATEFORMAT, { format: newFormat });
       setFormats([...formats, response.data.format]);
       setNewFormat('');
-      Alert.alert('Success', 'Format added successfully!');
+      Alert.alert(t('Success'), t('Format added successfully!'));
     } catch (err) {
-      Alert.alert('Error', 'Failed to create format.');
+      Alert.alert(t('Error'), t('Failed to create format.'));
     }
   };
 
@@ -61,9 +63,9 @@ const FormatsAdmin = () => {
     try {
       await axios.delete(API_URLS.DELETE_MASTER_DATEFORMAT(id));
       setFormats(formats.filter((format) => format.id !== id));
-      Alert.alert('Success', 'Format deleted successfully!');
+      Alert.alert(t('Success'), t('Format deleted successfully!'));
     } catch (err) {
-      Alert.alert('Error', 'Failed to delete format.');
+      Alert.alert(t('Error'), t('Failed to delete format.'));
     }
   };
 
@@ -71,7 +73,7 @@ const FormatsAdmin = () => {
     try {
       await axios.put(API_URLS.UPDATE_MASTER_DATEFORMAT(id), { id, format: updatedFormat });
     } catch (err) {
-      Alert.alert('Error', 'Failed to update format.');
+      Alert.alert(t('Error'), t('Failed to update format.'));
     }
   };
 
@@ -80,9 +82,9 @@ const FormatsAdmin = () => {
       for (const format of formats) {
         await handleUpdateFormat(format.id, format.format);
       }
-      Alert.alert('Success', 'All formats updated successfully!');
+      Alert.alert(t('Success'), t('All formats updated successfully!'));
     } catch (err) {
-      Alert.alert('Error', 'Failed to update formats.');
+      Alert.alert(t('Error'), t('Failed to update formats.'));
     }
   };
 
@@ -97,7 +99,7 @@ const FormatsAdmin = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <Text style={styles.header}>Edit Formats</Text>
+        <Text style={styles.header}>{t('Edit Formats')}</Text>
         <FlatList
           data={formats}
           keyExtractor={(item) => item.id.toString()}
@@ -113,7 +115,7 @@ const FormatsAdmin = () => {
                 style={styles.deleteButton}
                 onPress={() => handleDeleteFormat(item.id)}
               >
-                <Text style={styles.deleteButtonText}>Delete</Text>
+                <Text style={styles.deleteButtonText}>{t('Delete')}</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -124,14 +126,14 @@ const FormatsAdmin = () => {
             style={styles.input}
             value={newFormat}
             onChangeText={setNewFormat}
-            placeholder="Enter new format"
+            placeholder={t('Enter new format')}
           />
           <TouchableOpacity style={styles.addButton} onPress={handleAddFormat}>
-            <Text style={styles.addButtonText}>Add Format</Text>
+            <Text style={styles.addButtonText}>{t('Add Format')}</Text>
           </TouchableOpacity>
         </View>
         <TouchableOpacity style={styles.saveButton} onPress={handleSubmit}>
-          <Text style={styles.saveButtonText}>Save Changes</Text>
+          <Text style={styles.saveButtonText}>{t('Save Changes')}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

@@ -12,10 +12,14 @@ import {
 import Ionicons from "react-native-vector-icons/Ionicons";
 import GlobalContext from "../context/GlobalContext";
 import { Alert } from "react-native";
+import { useTranslation } from 'react-i18next'; // Import translation hook
+
 
 const labelsClasses = ["indigo", "gray", "green", "blue", "red", "purple"];
 
 export default function EventModel() {
+    const { t } = useTranslation(); // Initialize the translation hook
+  
   const { selectedEvent, setSelectedEvent, setShowEventModal, dispatchCalEvent, daySelected } =
     useContext(GlobalContext);
 
@@ -47,8 +51,8 @@ export default function EventModel() {
   const handleSubmit = () => {
     if (!title.trim()) {
       Alert.alert(
-        "Missing Title",
-        "Please enter a title for the event.",
+        t('missingTitle'),
+        t('missingTitleMessage'),
         [
           {
             text: "OK",
@@ -78,15 +82,15 @@ export default function EventModel() {
   const handleDelete = () => {
     if (selectedEvent) {
       Alert.alert(
-        "Delete Event", // Title
-        "Are you sure you want to delete this event?", // Message
+        t('deleteEvent'), // Use translation for Delete Event
+        t('deleteEventMessage'), // Use translation for message
         [
           {
-            text: "Cancel",
+            text: t('cancel'), // Use translation for Cancel
             style: "cancel", // iOS styling for cancel button
           },
           {
-            text: "Delete",
+            text: t('delete'), // Use translation for Delete
             onPress: () => {
               dispatchCalEvent({ type: "delete", payload: selectedEvent });
               setShowEventModal(false);
@@ -121,20 +125,20 @@ export default function EventModel() {
           </TouchableOpacity>
         </View>
           <Text style={styles.heading}>
-            {selectedEvent ? "Update Event" : "Create New Event"}
+            {selectedEvent ? t('updateEvent') : t('createNewEvent')}
           </Text>
 
           <Text style={styles.dateText}>{formatDate(daySelected)}</Text>
 
           <TextInput
             style={styles.input}
-            placeholder="Event Title"
+            placeholder={t('eventTitle')}
             value={title}
             onChangeText={setTitle}
           />
           <TextInput
             style={styles.input}
-            placeholder="Event Description"
+            placeholder={t('eventDescription')}
             value={description}
             onChangeText={setDescription}
           />
@@ -151,7 +155,7 @@ export default function EventModel() {
             ))}
           </View>
 
-          <Text style={styles.label}>Add Guest Emails</Text>
+          <Text style={styles.label}>{t('addGuestEmails')}</Text>
           {guestEmails.map((email, index) => (
             <View key={index} style={styles.guestContainer}>
               <TextInput
@@ -169,12 +173,12 @@ export default function EventModel() {
             </View>
           ))}
           <TouchableOpacity onPress={addGuestField} style={styles.addButton}>
-            <Text style={styles.addText}>Add Guest</Text>
+            <Text style={styles.addText}>{t('addGuest')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={handleSubmit} style={styles.saveButton}>
             <Text style={styles.saveButtonText}>
-              {selectedEvent ? "Update Event" : "Save Event"}
+              {selectedEvent ? t('updateEventButton') : t('saveEvent')}
             </Text>
           </TouchableOpacity>
         </ScrollView>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -11,17 +11,27 @@ import ListScreen from '../screens/BottomTabScreens/ListScreen';
 import SettingsScreen from '../screens/BottomTabScreens/SettingsScreen';
 import ProfileNavigator from '../navigators/ProfileNavigator';
 
+import useProfile from '../userDataBackend/ProfileData';
+
+import { useTranslation } from 'react-i18next'; // Import the translation hook
 
 const Tab = createBottomTabNavigator();
 
 export default function BottomTabs() {
+  const { t } = useTranslation(); // Initialize the translation hook
   const navigation = useNavigation();
   const [isLoggedIn, setIsLoggedIn] = useState(null);
-   
+  const profileData = useProfile();
 
-
-
-
+  const profile = useMemo(() => profileData || {
+    name: "N/A",
+    gender: "N/A",
+    role: "N/A",
+    phno: "N/A",
+    email: "N/A",
+    profilePicture: "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg",
+    accountStatus: "Public"
+  }, [profileData]);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -57,7 +67,7 @@ export default function BottomTabs() {
           } else if (route.name === 'Profile') {
             return (
               <Image
-                source={{ uri: "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg" }}
+                source={{ uri: profile.profilePicture }}
                 style={[
                   styles.profileIcon,
                   { borderColor: focused ? 'black' : 'gray' },
@@ -73,12 +83,13 @@ export default function BottomTabs() {
         headerShown: false,
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Search" component={SearchScreen} />
+      <Tab.Screen name="Home" component={HomeScreen} options={{ title: t('Home') }} />
+      <Tab.Screen name="Search" component={SearchScreen} options={{ title: t('Search') }} />
       <Tab.Screen
         name="Profile"
         component={ProfileNavigator}
         options={{
+          title: t('Profile'),
           tabBarButton: (props) => (
             <TouchableOpacity
               {...props}
@@ -94,10 +105,9 @@ export default function BottomTabs() {
           ),
         }}
       />
-      <Tab.Screen name="List" component={ListScreen} />
-      <Tab.Screen name="Setting" component={SettingsScreen} />
+      <Tab.Screen name="List" component={ListScreen} options={{ title: t('List') }} />
+      <Tab.Screen name="Setting" component={SettingsScreen} options={{ title: t('Settings') }} />
     </Tab.Navigator>
-
   );
 }
 

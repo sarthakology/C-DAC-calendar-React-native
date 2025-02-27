@@ -10,7 +10,6 @@ const refreshJWTToken = async (navigation) => {
 
       const newAccessToken = response.data.accessToken;
       await AsyncStorage.setItem('accessToken', newAccessToken);
-      console.log("token refreshed")
       return newAccessToken;
     }
   } catch (error) {

@@ -13,8 +13,11 @@ import {
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import GlobalContext from "../context/GlobalContext";
+import { useTranslation } from 'react-i18next'; // Import translation hook
 
 export default function TaskModal() {
+      const { t } = useTranslation(); // Initialize the translation hook
+  
   const { selectedTask, setSelectedTask, setShowTaskModal, dispatchCalTask, daySelected } =
     useContext(GlobalContext);
 
