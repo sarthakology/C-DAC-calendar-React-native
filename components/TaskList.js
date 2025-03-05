@@ -12,7 +12,7 @@ const TaskCard = ({ task, onPress }) => (
           {task.title}
         </Text>
         <Text style={styles.taskDate}>
-          {`${useTranslation().t('Date')}: {new Date(task.date).toDateString()}`}
+        {useTranslation().t('Date')} {new Date(task.date).toDateString()}
         </Text>
         <Text style={styles.taskDescription}>{task.description}</Text>
       </View>

@@ -16,7 +16,6 @@ const refreshJWTToken = async (navigation) => {
     console.error('Error refreshing JWT token:', error);
     await AsyncStorage.removeItem('accessToken');
     await AsyncStorage.removeItem('refreshToken');
-    console.log('User logged out');
 
     if (navigation) {
       navigation.navigate('Login');

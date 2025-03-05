@@ -25,12 +25,12 @@ i18n
       japanese: { translation: ja },
       korean: { translation: ko },
     },
-    lng: 'english', // Default language
-    fallbackLng: 'enlish', // Fallback if a translation is missing
-    compatibilityJSON: 'v3', // Ensures compatibility with React Native
+    lng: 'english',
+    fallbackLng: 'enlish',
+    compatibilityJSON: 'v3',
     interpolation: { escapeValue: false },
     react: {
-      useSuspense: false, // Required for React Native
+      useSuspense: false,
     },
   });
 

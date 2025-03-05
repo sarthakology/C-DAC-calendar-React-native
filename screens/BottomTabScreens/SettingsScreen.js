@@ -81,7 +81,6 @@ const SettingsScreen = ({ navigation }) => {
     try {
       await AsyncStorage.setItem('userSettings', JSON.stringify(settings));
       i18n.changeLanguage(settings.language);
-      console.log('Settings saved:', settings);
     } catch (error) {
       console.error('Error saving settings:', error);
     }

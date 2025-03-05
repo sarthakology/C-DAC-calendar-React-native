@@ -59,23 +59,19 @@ export default function ProfileImageScreen({ navigation }) {
     try {
       if (!selectedImage) return;
   
-      // Convert selected image to Blob before uploading
       const responseBlob = await fetch(selectedImage);
       const blob = await responseBlob.blob();
   
-      // Upload image to Firebase and get the URL
+
       uploadFileToFirebase(blob, async (url) => {
-        console.log("Firebase Image URL:", url);
-  
-        // Ensure email is included in the request
         const updatedData = {
           name: profile.name,
           gender: profile.gender,
           role: profile.role,
           phno: profile.phno,
           accountStatus :profile.accountStatus,
-          email: profile.email,  // Required by backend
-          profilePicture: url,   // Updating only profilePicture
+          email: profile.email,
+          profilePicture: url,
         };
   
         const accessToken = await refreshJWTToken(navigation);
